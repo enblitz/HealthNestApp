@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import "./App.css";
 import { Container, Row } from "reactstrap";
 
@@ -11,13 +11,7 @@ const Header = () => {
   const profileActionRef = useRef(null);
   const [profileActionsVisible, setProfileActionsVisible] = useState(false);
   const [user, setUser] = useState(null);
-
-  const nav_links = [
-    { path: "home", display: "Home" },
-    { path: "about", display: "About" },
-    { path: "doctors", display: "Doctors" },
-    { path: "contact", display: "Contact" },
-  ];
+  const navigate = useNavigate();
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -30,6 +24,22 @@ const Header = () => {
   const toggleProfileActions = () =>
     setProfileActionsVisible(!profileActionsVisible);
   const closeProfileActions = () => setProfileActionsVisible(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    navigate("/login");
+  };
+
+  let nav_links = [
+    { path: "home", display: "Home" },
+    { path: "about", display: "About" },
+    { path: "contact", display: "Contact" },
+  ];
+
+  if (!user || user.role === "patient") {
+    nav_links.splice(2, 0, { path: "doctors", display: "Doctors" });
+  }
 
   return (
     <header className="header sticky-header">
@@ -62,7 +72,7 @@ const Header = () => {
             <div className="nav_icons">
               {user && (
                 <div className="user_info">
-                  <span>{user.name }</span>
+                  <span>{user.name}</span>
                   <span> | {user.role}</span>
                 </div>
               )}
@@ -88,33 +98,52 @@ const Header = () => {
                     >
                       My Profile
                     </Link>
-                    <Link
-                      to="/signup"
-                      style={{
-                        textDecoration: "none",
-                        color: "var(--primary-color)",
-                      }}
-                    >
-                      SignUp
-                    </Link>
-                    <Link
-                      to="/Login"
-                      style={{
-                        textDecoration: "none",
-                        color: "var(--primary-color)",
-                      }}
-                    >
-                      Login
-                    </Link>
-                    <Link
-                      to="/dashboard"
-                      style={{
-                        textDecoration: "none",
-                        color: "var(--primary-color)",
-                      }}
-                    >
-                      Dashboard
-                    </Link>
+                    {!user ? (
+                      <>
+                        <Link
+                          to="/signup"
+                          style={{
+                            textDecoration: "none",
+                            color: "var(--primary-color)",
+                          }}
+                        >
+                          SignUp
+                        </Link>
+                        <Link
+                          to="/login"
+                          style={{
+                            textDecoration: "none",
+                            color: "var(--primary-color)",
+                          }}
+                        >
+                          Login
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        {user.name === "Admin" && (
+                          <Link
+                            to="/dashboard"
+                            style={{
+                              textDecoration: "none",
+                              color: "var(--primary-color)",
+                            }}
+                          >
+                            Dashboard
+                          </Link>
+                        )}
+                        <Link
+                          to="#"
+                          onClick={handleLogout}
+                          style={{
+                            textDecoration: "none",
+                            color: "var(--primary-color)",
+                          }}
+                        >
+                          Logout
+                        </Link>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
