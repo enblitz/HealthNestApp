@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './doctorsearch.css';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const Doctors = () => {
   const [filter, setFilter] = useState({ name: '', specialization: '', fees: '', location: '' });
   const [doctors, setDoctors] = useState([]);
-  const [minPrice, setMinPrice] = useState(0); // Set minimum price to 0
-  const [maxPrice, setMaxPrice] = useState(5000); // Set maximum price to 5000
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(5000);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState('');
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -42,13 +45,6 @@ const Doctors = () => {
     return window.btoa(binary);
   };
 
-  // const handleMinPriceChange = (event) => {
-  //   const value = parseInt(event.target.value);
-  //   if (value <= maxPrice) {
-  //     setMinPrice(value);
-  //   }
-  // };
-
   const handleMaxPriceChange = (event) => {
     const value = parseInt(event.target.value);
     if (value >= minPrice) {
@@ -62,10 +58,26 @@ const Doctors = () => {
     console.log('Maximum Price:', maxPrice);
   };
 
+  const handleBookAppointmentClick = (doctorName) => {
+    setSelectedDoctor(doctorName);
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+  };
+
+  const handlePopupSubmit = (event) => {
+    event.preventDefault();
+    // Handle form submission logic here
+    setIsPopupOpen(false);
+    alert('Appointment booked!');
+  };
+
   return (
     <div className="container-doctor">
       <div className="filters">
-        <h2>Filter Doctors</h2>
+        <h2>Filters</h2>
         <input type="text" name="name" placeholder="Search by Name" value={filter.name} onChange={handleFilterChange} className="input" />
         <div>
           <select id="specialization" name="specialization" onChange={handleFilterChange} className="input">
@@ -84,18 +96,17 @@ const Doctors = () => {
             <button onClick={handleSubmit} className="price-go">Go</button>
           </div>
         </div>
-        {/* <input type="text" name="location" placeholder="Filter by Location" value={filter.location} onChange={handleFilterChange} className="input" /> */}
         <div>
           <select id="location" name="location" onChange={handleFilterChange} className='input'>
             <option value="all">Filter by location</option>
-            <option value="ahmedabad">Ahmedabad</option>
-            <option value="gandhinagar">Gandhinagar</option>
-            <option value="chennai">Chennai</option>
-            <option value="mumbai">Mumbai</option>
-            <option value="benglore">Benglore</option>
-            <option value="delhi">Delhi</option>
-            <option value="kolkata">Kolkata</option>
-            <option value="lakhnow">Lakhnow</option>
+            <option value="Ahmedabad">Ahmedabad</option>
+            <option value="Gandhinagar">Gandhinagar</option>
+            <option value="Chennai">Chennai</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Benglore">Benglore</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Kolkata">Kolkata</option>
+            <option value="Lakhnow">Lakhnow</option>
           </select>
         </div>
       </div>
@@ -104,17 +115,42 @@ const Doctors = () => {
         <div className="cardContainer">
           {filteredDoctors.map((doctor, index) => (
             <div key={index} className="card">
-              <img src={`data:image/jpeg;base64,${bufferToBase64(doctor.doc_pic)}`} alt={doctor.name} className="image" />
-              <h3>{doctor.name}</h3>
-              <p><strong>Specialization:</strong> {doctor.specialization}</p>
-              <p><strong>Fees:</strong> {doctor.fees}</p>
-              <p><strong>Location:</strong> {doctor.location}</p>
-              <p>{doctor.description}</p>
-              <button className="bookButton">Book Appointment</button>
+              <Link to='/details' style={{ textDecoration: "none", color: "black" }} >
+                <img src={`data:image/jpeg;base64,${bufferToBase64(doctor.doc_pic)}`} alt={doctor.name} className="image" />
+                <h3>{doctor.name}</h3>
+                <p><strong>Specialization:</strong> {doctor.specialization}</p>
+                <p><strong>Fees:</strong> {doctor.fees}</p>
+                <p><strong>Location:</strong> {doctor.location}</p>
+                <p>{doctor.description}</p>
+              </Link>
+              <button className="bookButton" type='button' onClick={() => handleBookAppointmentClick(doctor.name)}>Book Appointment</button>
             </div>
           ))}
         </div>
       </div>
+      {isPopupOpen && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <span className="close-button" onClick={handleClosePopup}>×</span>
+            <h2>Book Appointment With {selectedDoctor}</h2>
+            <form onSubmit={handlePopupSubmit}>
+              <label>
+                Name:
+                <input type="text" name="name" required />
+              </label>
+              <label>
+                Date:
+                <input type="date" name="date" required />
+              </label>
+              <label>
+                Time:
+                <input type="time" name="time" required />
+              </label>
+              <button type="submit">Submit</button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
