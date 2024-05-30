@@ -13,13 +13,6 @@ const Header = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  const nav_links = [
-    { path: "home", display: "Home" },
-    { path: "about", display: "About" },
-    { path: "doctors", display: "Doctors" },
-    { path: "contact", display: "Contact" },
-  ];
-
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) {
@@ -38,6 +31,16 @@ const Header = () => {
     navigate("/login");
   };
 
+  let nav_links = [
+    { path: "home", display: "Home" },
+    { path: "about", display: "About" },
+    { path: "contact", display: "Contact" },
+  ];
+
+  if (!user || user.role === "patient") {
+    nav_links.splice(2, 0, { path: "doctors", display: "Doctors" });
+  }
+
   return (
     <header className="header sticky-header">
       <Container>
@@ -52,8 +55,13 @@ const Header = () => {
                   <li className="nav_item nav_link" key={index}>
                     <NavLink
                       to={item.path}
-                      className={(navClass) => (navClass.isActive ? "nav_active" : "")}
-                      style={{ textDecoration: "none", color: "var(--primary-color)" }}
+                      className={(navClass) =>
+                        navClass.isActive ? "nav_active" : ""
+                      }
+                      style={{
+                        textDecoration: "none",
+                        color: "var(--primary-color)",
+                      }}
                     >
                       {item.display}
                     </NavLink>
@@ -69,15 +77,24 @@ const Header = () => {
                 </div>
               )}
               <div className="user_icon" onBlur={closeProfileActions}>
-                <img src={userIcon} alt="User Icon" onClick={toggleProfileActions} />
+                <img
+                  src={userIcon}
+                  alt="User Icon"
+                  onClick={toggleProfileActions}
+                />
                 <div
-                  className={`profile-actions ${profileActionsVisible ? "show_profileActions" : ""}`}
+                  className={`profile-actions ${
+                    profileActionsVisible ? "show_profileActions" : ""
+                  }`}
                   ref={profileActionRef}
                 >
                   <div className="profile_link">
                     <Link
                       to="/myprofile"
-                      style={{ textDecoration: "none", color: "var(--primary-color)" }}
+                      style={{
+                        textDecoration: "none",
+                        color: "var(--primary-color)",
+                      }}
                     >
                       My Profile
                     </Link>
@@ -85,31 +102,47 @@ const Header = () => {
                       <>
                         <Link
                           to="/signup"
-                          style={{ textDecoration: "none", color: "var(--primary-color)" }}
+                          style={{
+                            textDecoration: "none",
+                            color: "var(--primary-color)",
+                          }}
                         >
                           SignUp
                         </Link>
                         <Link
                           to="/login"
-                          style={{ textDecoration: "none", color: "var(--primary-color)" }}
+                          style={{
+                            textDecoration: "none",
+                            color: "var(--primary-color)",
+                          }}
                         >
                           Login
                         </Link>
-                        <Link
-                          to="/dashboard"
-                          style={{ textDecoration: "none", color: "var(--primary-color)" }}
-                        >
-                          Dashboard
-                        </Link>
                       </>
                     ) : (
-                      <Link
-                        to="#"
-                        onClick={handleLogout}
-                        style={{ textDecoration: "none", color: "var(--primary-color)" }}
-                      >
-                        Logout
-                      </Link>
+                      <>
+                        {user.name === "Admin" && (
+                          <Link
+                            to="/dashboard"
+                            style={{
+                              textDecoration: "none",
+                              color: "var(--primary-color)",
+                            }}
+                          >
+                            Dashboard
+                          </Link>
+                        )}
+                        <Link
+                          to="#"
+                          onClick={handleLogout}
+                          style={{
+                            textDecoration: "none",
+                            color: "var(--primary-color)",
+                          }}
+                        >
+                          Logout
+                        </Link>
+                      </>
                     )}
                   </div>
                 </div>
