@@ -10,6 +10,9 @@ import Doctors from './Doctorsearch';
 import Header from './Header';
 import Footer from './Footer';
 import MyProfile from './MyProfile'
+import Details from './Details'
+
+import Appointment from './Appointment';
 
 function App() {
   return (
@@ -25,6 +28,8 @@ function App() {
         <Route path='/doctors' element={<Doctors />}></Route>
         <Route path='myprofile/*' element={<MyProfile />}></Route>
         <Route path='/forgotpassword' element={<ForgotPassword />}></Route>
+        <Route path='/details' element={<Details />}></Route>
+        <Route path='/appointment' element={<Appointment />}></Route>
       </Routes>
       <Footer />
     </BrowserRouter>
