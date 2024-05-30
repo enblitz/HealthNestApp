@@ -1,1 +1,2 @@
-docker build -t backend:1.0 .
+docker build -t jainam05/healthnest:backend .
+docker push jainam05/healthnest:backend

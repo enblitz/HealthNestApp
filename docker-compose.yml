@@ -26,14 +26,13 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: example_password
       MYSQL_DATABASE: test
       MYSQL_USER: example_user
       MYSQL_PASSWORD: example_password
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$MYSQL_ROOT_PASSWORD"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$MYSQL_PASSWORD"]
       interval: 10s
       timeout: 5s
       retries: 3
