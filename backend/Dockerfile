@@ -17,13 +17,13 @@ COPY routes/ ./routes/
 COPY Controller/ ./Controller
 
 # Expose the port your app runs on
-EXPOSE 4000
+EXPOSE 8081
 
 # Set environment variables
-ENV DB_HOST=mysql-container
-ENV DB_USER=example_user
-ENV DB_PASSWORD=example_password
-ENV DB_NAME=test
+ENV DB_HOST="'mysql-container'"
+ENV DB_USER="example_user"
+ENV DB_PASSWORD="example_password"
+ENV DB_DATABASE="test"
 
 # Command to run your application
 CMD ["node", "server.js"]
