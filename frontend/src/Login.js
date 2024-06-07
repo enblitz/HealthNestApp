@@ -1,9 +1,11 @@
-// Login.js
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Validation from "./LoginValidation";
 import axios from "axios";
+import { BASE_URL } from "./config";
+
 import { useUser } from "./UserContext";
+import { toast } from 'react-toastify';
 
 function Login() {
   const [values, setValues] = useState({
@@ -27,7 +29,7 @@ function Login() {
 
     if (Object.keys(validationErrors).length === 0) {
       axios
-        .post("http://localhost:8081/login", values)
+        .post(`${BASE_URL}/login`, values)
         .then((res) => {
           if (res.data.status === "Success") {
             // Ensure the structure of the user object is correct
@@ -40,8 +42,11 @@ function Login() {
             } else {
               navigate("/home");
             }
+
+            // Show toast message
+            toast.success("Successfully logged in");
           } else {
-            alert("No record exist");
+            alert("No record exist , Please Create Your Account ...! ");
           }
         })
         .catch((err) => console.log(err));
