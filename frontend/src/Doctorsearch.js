@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './doctorsearch.css';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Doctors = () => {
   const [filter, setFilter] = useState({ name: '', specialization: '', fees: '', location: '' });
   const [doctors, setDoctors] = useState([]);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(5000);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [selectedDoctor, setSelectedDoctor] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -32,7 +31,7 @@ const Doctors = () => {
     doctor.name.toLowerCase().includes(filter.name.toLowerCase()) &&
     doctor.specialization.toLowerCase().includes(filter.specialization.toLowerCase()) &&
     (filter.fees === '' || doctor.fees.includes(filter.fees)) &&
-    (filter.location === '' || doctor.location.toLowerCase().includes(filter.location.toLowerCase()))
+    (filter.location === '' || doctor.hospital_loc.toLowerCase().includes(filter.location.toLowerCase()))
   );
 
   const bufferToBase64 = (buffer) => {
@@ -58,20 +57,13 @@ const Doctors = () => {
     console.log('Maximum Price:', maxPrice);
   };
 
-  const handleBookAppointmentClick = (doctorName) => {
-    setSelectedDoctor(doctorName);
-    setIsPopupOpen(true);
-  };
-
-  const handleClosePopup = () => {
-    setIsPopupOpen(false);
-  };
-
-  const handlePopupSubmit = (event) => {
-    event.preventDefault();
-    // Handle form submission logic here
-    setIsPopupOpen(false);
-    alert('Appointment booked!');
+  const handleBookAppointment = (doctorId) => {
+    if (doctorId) {
+      localStorage.setItem('doctor_id', doctorId);
+      navigate('/appointment');
+    } else {
+      console.error('Doctor ID is undefined');
+    }
   };
 
   return (
@@ -96,6 +88,7 @@ const Doctors = () => {
             <button onClick={handleSubmit} className="price-go">Go</button>
           </div>
         </div>
+        {/* <input type="text" name="location" placeholder="Filter by Location" value={filter.location} onChange={handleFilterChange} className="input" /> */}
         <div>
           <select id="location" name="location" onChange={handleFilterChange} className='input'>
             <option value="all">Filter by location</option>
@@ -120,39 +113,17 @@ const Doctors = () => {
                 <h3>{doctor.name}</h3>
                 <p><strong>Specialization:</strong> {doctor.specialization}</p>
                 <p><strong>Fees:</strong> {doctor.fees}</p>
-                <p><strong>Location:</strong> {doctor.location}</p>
+                <p><strong>Location:</strong> {doctor.hospital_loc}</p>
                 <p>{doctor.description}</p>
               </Link>
-              <button className="bookButton" type='button' onClick={() => handleBookAppointmentClick(doctor.name)}>Book Appointment</button>
+              <button onClick={() => handleBookAppointment(doctor.doctor_id)} className="bookButton" style={{ textDecoration: 'none' }}>Book Appointment</button>
             </div>
           ))}
         </div>
       </div>
-      {isPopupOpen && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-            <span className="close-button" onClick={handleClosePopup}>×</span>
-            <h2>Book Appointment With {selectedDoctor}</h2>
-            <form onSubmit={handlePopupSubmit}>
-              <label>
-                Name:
-                <input type="text" name="name" required />
-              </label>
-              <label>
-                Date:
-                <input type="date" name="date" required />
-              </label>
-              <label>
-                Time:
-                <input type="time" name="time" required />
-              </label>
-              <button type="submit">Submit</button>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
 export default Doctors;
+

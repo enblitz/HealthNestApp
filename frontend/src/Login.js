@@ -1,7 +1,9 @@
+// Login.js
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Validation from "./LoginValidation";
 import axios from "axios";
+import { useUser } from "./UserContext";
 
 function Login() {
   const [values, setValues] = useState({
@@ -12,6 +14,7 @@ function Login() {
 
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const { login } = useUser(); // Get login function from context
 
   const handleInput = (event) => {
     setValues((prev) => ({ ...prev, [event.target.name]: event.target.value }));
@@ -27,8 +30,8 @@ function Login() {
         .post("http://localhost:8081/login", values)
         .then((res) => {
           if (res.data.status === "Success") {
-            // Store user data in local storage
-            localStorage.setItem("user", JSON.stringify(res.data.user));
+            // Ensure the structure of the user object is correct
+            login(res.data.user);
 
             if (values.role === "Doctor") {
               navigate("/doctor-home");
