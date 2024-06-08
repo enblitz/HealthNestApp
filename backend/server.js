@@ -49,7 +49,12 @@ app.post("/login", (req, res) => {
         const user = data[0];
         return res.json({
           status: "Success",
-          user: { name: user.name, role: user.role },
+          user: {
+            login_id: user.login_id,
+            name: user.name,
+            role: user.role,
+            email: user.email,
+          },
         });
       } else {
         return res.json({ status: "Failed", message: "Invalid credentials" });
@@ -57,6 +62,7 @@ app.post("/login", (req, res) => {
     }
   );
 });
+
 
 app.post("/signup", (req, res) => {
   const sql =
@@ -102,6 +108,81 @@ app.post("/forgotpassword", (req, res) => {
       }
     }
   );
+});
+
+// Fetch patient details by email
+app.get("/patients/email/:email", (req, res) => {
+  const email = req.params.email;
+  const sql = "SELECT * FROM patient WHERE email = ?";
+
+  db.query(sql, [email], (err, data) => {
+    if (err) {
+      console.error("Error fetching patient details:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    if (data.length === 0) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
+    const patient = data[0];
+    return res.json(patient);
+  });
+});
+
+// Update patient details by email
+app.put("/patients/email/:email", (req, res) => {
+  const email = req.params.email;
+  const { name, email: newEmail, number, adhar_no, dob, gender, insurance, address } = req.body;
+
+  const sql = "UPDATE patient SET name =?, email =?, number =?, adhar_no =?, dob =?, gender =?, insurance =?, address =? WHERE email =?";
+
+  db.query(sql, [name, newEmail, number, adhar_no, dob, gender, insurance, address, email], (err, data) => {
+    if (err) {
+      console.error("Error updating patient details:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    if (data.affectedRows > 0) {
+      return res.json({ message: "Patient details updated successfully" });
+    } else {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+  });
+});
+
+app.use("/patients", patientRoutes);
+
+app.post('/appointments', (req, res) => {
+  const { doctor_id, patient_id, appointment_date, appointment_time } = req.body;
+
+  // Fetch patient data from patients table based on login_id
+  db.query(`SELECT name, email, number FROM patient WHERE login_id =?`, [patient_id], (err, patientData) => {
+    if (err) {
+      console.error('Error fetching patient data:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    if (patientData.length === 0) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+
+    const patientName = patientData[0].name;
+    const patientEmail = patientData[0].email;
+    const patientNumber = patientData[0].number;
+
+    const sql = 'INSERT INTO appointments (doctor_id, patient_id, appointment_date, appointment_time, patient_name, patient_email, patient_number) VALUES (?,?,?,?,?,?,?)';
+    const values = [doctor_id, patient_id, appointment_date, appointment_time, patientName, patientEmail, patientNumber];
+
+    db.query(sql, values, (err, result) => {
+      if (err) {
+        console.error('Error creating appointment:', err);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+
+      return res.json({ message: 'Appointment created successfully' });
+    });
+  });
 });
 
 app.listen(port, () => console.log(`Server running on port ${port}`));

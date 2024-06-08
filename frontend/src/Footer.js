@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
-
+import { Link } from 'react-router-dom';
+import { BASE_URL } from "./config";
 import Logo from './images/Logo.jpg'
 import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from 'react-icons/fa';
 import { FaEnvelope, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
@@ -11,7 +12,7 @@ const Footer = () => {
       <div className="row">
         <div className="col-lg-3 col-md-6">
           <img src={Logo} alt="" width={230} className='footer-image' />
-          <div className='footer-o-text d-block mt-3 mb-3'>Lorem ipsum dolor sit, amet consectetur adipisicing elit. In, vero fuga quis odit laboriosam soluta deserunt vel vitae?</div>
+          <div className='footer-o-text d-block mt-3 mb-3'>"Your partner in optimal health. Connect with top doctors, manage appointments, and access personalized healthcare solutions seamlessly."</div>
           <div className="social-icons">
             <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
               <FaFacebookF />
@@ -30,20 +31,20 @@ const Footer = () => {
         <div className="col-lg-3 col-md-6">
           <p className="footer-title">For Patient</p>
           <ul className='footer-ul'>
-            <li>Search for Doctors</li>
-            <li>Login</li>
-            <li>Register</li>
-            <li>Booking</li>
-            <li>Patient Dashboard</li>
+          <Link to = "/doctors" style={{ textDecoration: "none", color: "black"}}> <li>Search for Doctors</li> </Link>
+          <Link to = "/Login" style={{ textDecoration: "none", color: "black"}}><li>Login</li> </Link>
+          <Link to = "/signup" style={{ textDecoration: "none", color: "black"}}><li>Signup</li></Link>
+          <Link to = "/" style={{ textDecoration: "none", color: "black"}}><li>Book Appointment</li></Link>
+          <Link to = "myprofile/*" style={{ textDecoration: "none", color: "black"}}><li>My Profile</li></Link>
           </ul>
         </div>
         <div className="col-lg-3 col-md-6">
-          <p className="footer-title">For Doctor</p>
+          <p className="footer-title">For Doctors</p>
           <ul className="footer-ul">
-            <li>Appointments</li>
-            <li>Login</li>
-            <li>Register</li>
-            <li>Doctor Dashboard</li>
+          <Link to = "myprofile/*" style={{ textDecoration: "none", color: "black"}}><li>My Profile</li></Link>
+          <Link to = "/Login" style={{ textDecoration: "none", color: "black"}}><li>Login</li> </Link>
+          <Link to = "/signup" style={{ textDecoration: "none", color: "black"}}><li>Signup</li></Link>
+          <Link to = "/doctorsdashboard" style={{ textDecoration: "none", color: "black"}}><li>Doctor Dashboard</li></Link>
           </ul>
         </div>
         <div className="col-lg-3 col-md-6">
@@ -53,19 +54,19 @@ const Footer = () => {
               <div className="footer-info-i">
                 <FaMapMarkerAlt />
               </div>
-              <span> 121, Mirzapure Union office,<br /> Sylhet, Bangladesh 03214 </span>
+              <span> 907 , Enblitz Technologies <br /> Gujarat, Ahmedabad - 382480 </span>
             </li>
             <li className='d-flex'>
               <div className="footer-info-i">
                 <FaPhoneAlt />
               </div>
-              <span>+88 017 51 040425</span>
+              <span>1234567890</span>
             </li>
             <li className='d-flex'>
               <div className="footer-info-i">
                 <FaEnvelope />
               </div>
-              <span>info@woodencraft.com</span>
+              <span>info@healthnest.com</span>
             </li>
           </ul>
         </div>
@@ -74,4 +75,4 @@ const Footer = () => {
   </section>
 }
 
-export default Footer
+export default Footer;

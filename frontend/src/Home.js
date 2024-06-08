@@ -3,31 +3,73 @@ import { Link } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaCheckDouble, FaClock, FaHeadset, FaHouseUser } from "react-icons/fa";
-
 import img1 from "./images/specialities-01.png";
 import img2 from "./images/specialities-02.png";
 import img3 from "./images/specialities-03.png";
 import img4 from "./images/specialities-04.png";
 import img5 from "./images/specialities-05.png";
 import axios from 'axios';
+import { BASE_URL } from "./config";
+
 
 function Home() {
     const user = JSON.parse(localStorage.getItem('user'));
-    // const role = user.role; // Can be 'Doctor', 'Receptionist', or 'Patient'
-
+    const userRole = user ? user.role : ''; // Extract user role from the user object
     const [filter, setFilter] = useState({ name: '', specialization: '', fees: '', location: '' });
     const [doctors, setDoctors] = useState([]);
+    const [showPopup, setShowPopup] = useState(false);
+    const [mobile, setMobile] = useState('');
+    const [aadhaar, setAadhaar] = useState('');
+    const [gender, setGender] = useState('');
+    const [dob, setDob] = useState('');
+    const [age, setAge] = useState(null);
+    const [maxBirthDate, setMaxBirthDate] = useState('');
+    const [address, setAddress] = useState('');
 
     useEffect(() => {
         const fetchDoctors = async () => {
             try {
-                const response = await axios.get('http://localhost:8081/doctors');
+                const response = await axios.get(`${BASE_URL}/doctors`);
                 setDoctors(response.data);
             } catch (error) {
                 console.error('Failed to fetch doctors:', error);
             }
         };
         fetchDoctors();
+    }, []);
+
+    useEffect(() => {
+        const maxDate = new Date();
+        maxDate.setFullYear(maxDate.getFullYear() - 18);
+        setMaxBirthDate(maxDate.toISOString().split('T')[0]);
+
+        const fetchUserProfile = async () => {
+            try {
+                const userString = localStorage.getItem('user');
+                if (!userString) {
+                    console.error('User not found in localStorage');
+                    return;
+                }
+                const { email } = JSON.parse(userString);
+                const response = await axios.get(`${BASE_URL}/patients/email/${email}`);
+                const { number, adhar_no, gender, dob, address } = response.data;
+                setMobile(number || '');
+                setAadhaar(adhar_no || '');
+                setGender(gender || '');
+                setDob(dob || '');
+                setAddress(address || '');
+                if (!number || !adhar_no || !gender || !dob || !address) {
+                    const popupShown = sessionStorage.getItem('popupShown');
+                    if (!popupShown) {
+                        setShowPopup(true);
+                        sessionStorage.setItem('popupShown', 'true');
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to fetch user profile:', error);
+            }
+        };
+        fetchUserProfile();
     }, []);
 
     const bufferToBase64 = (buffer) => {
@@ -47,63 +89,66 @@ function Home() {
         (filter.location === '' || doctor.location.toLowerCase().includes(filter.location.toLowerCase()))
     );
 
-    const [showPopup, setShowPopup] = useState(false);
-    const [mobile, setMobile] = useState('');
-    const [aadhaar, setAadhaar] = useState('');
-    const [gender, setGender] = useState('');
-    const [dob, setDob] = useState('');
-    const [age, setAge] = useState(null);
-    const [maxBirthDate, setMaxBirthDate] = useState('');
-
-    useEffect(() => {
-        setShowPopup(true);
-        const maxDate = new Date();
-        maxDate.setFullYear(maxDate.getFullYear() - 110);
-        setMaxBirthDate(maxDate.toISOString().split('T')[0]);
-    }, []);
-
-    const handleClosePopup = () => {
-        setShowPopup(false);
+    const handleAddressChange = (e) => {
+        setAddress(e.target.value);
     };
-
     const handleMobileChange = (e) => {
         const value = e.target.value;
         if (/^\d*$/.test(value) && value.length <= 10) {
             setMobile(value);
         }
     };
-
     const handleAadhaarChange = (e) => {
-        const value = e.target.value.replace(/\s/g, ''); // Remove spaces
+        const value = e.target.value.replace(/\s/g, '');
         if (/^\d*$/.test(value) && value.length <= 12) {
-            const formattedValue = value.replace(/(.{4})/g, '$1 ').trim();
-            setAadhaar(formattedValue);
+            setAadhaar(value);
         }
     };
-
     const handleGenderChange = (e) => {
         setGender(e.target.value);
     };
-
     const handleDobChange = (e) => {
         const value = e.target.value;
         setDob(value);
         calculateAge(value);
     };
-
     const calculateAge = (dob) => {
         const birthDate = new Date(dob);
         const today = new Date();
-
         if (birthDate > today) {
-            setAge(null); // Reset age
+            setAge(null);
         } else {
             let age = today.getFullYear() - birthDate.getFullYear();
             const monthDifference = today.getMonth() - birthDate.getMonth();
             if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
                 age--;
             }
-            setAge(Math.min(age, 110)); // Limit age to maximum 110
+            setAge(Math.min(age, 110));
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const userString = localStorage.getItem('user');
+            if (!userString) {
+                console.error('User not found in localStorage');
+                return;
+            }
+            const { email } = JSON.parse(userString);
+            const response = await axios.post(`${BASE_URL}/patients/saveProfile`, {
+                mobile,
+                aadhaar,
+                gender,
+                dob,
+                address,
+                email,
+            });
+            console.log(response.data);
+            setShowPopup(false);
+            sessionStorage.setItem('popupShown', 'true');
+        } catch (error) {
+            console.error('Failed to submit patient details:', error);
         }
     };
 
@@ -112,72 +157,92 @@ function Home() {
             {showPopup && (
                 <div className="popup">
                     <div className="popup-content">
-                        <span className="close-popup" onClick={handleClosePopup}>&times;</span>
+                        <span className="close-popup" onClick={() => setShowPopup(false)}>&times;</span>
                         <h2>Complete Your Profile</h2>
-                        <form>
+                        <form onSubmit={handleSubmit}>
                             <div className="form-group">
-                                <label htmlFor="mobile">Mobile No:</label>
-                                <input
-                                    type="tel"
-                                    className="form-control"
-                                    id="mobile"
-                                    placeholder="Enter Your Mobile Number"
-                                    value={mobile}
-                                    onChange={handleMobileChange}
-                                    required
-                                />
-                                {mobile.length > 0 && mobile.length < 10 && (
-                                    <small className="text-danger">Mobile number must be exactly 10 digits long</small>
+                                {userRole === 'patient' && userRole === 'doctor' && (
+                                    <>
+                                        <label htmlFor="mobile">Mobile No:</label>
+                                        <input
+                                            type="tel"
+                                            className="form-control"
+                                            id="mobile"
+                                            placeholder="Enter Your Mobile Number"
+                                            value={mobile}
+                                            onChange={handleMobileChange}
+                                            required
+                                        />
+                                        {mobile.length > 0 && mobile.length < 10 && (
+                                            <small className="text-danger">Mobile number must be exactly 10 digits long</small>
+                                        )}
+                                    </>
                                 )}
-                                <label htmlFor="gender">Gender:</label>
-                                <select
-                                    className="form-control"
-                                    id="gender"
-                                    value={gender}
-                                    onChange={handleGenderChange}
-                                    required
-                                >
-                                    <option value="">Select Gender</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
-                                </select>
-
-                                <label htmlFor="dob">Date of Birth:</label>
-                                <input
-                                    type="date"
-                                    className="form-control"
-                                    id="dob"
-                                    value={dob}
-                                    onChange={handleDobChange}
-                                    max={maxBirthDate} // Set max birth date
-                                    required
-                                />
-                                {age !== null && (
-                                    <p>Age: {age} years</p>
+                                {userRole === 'patient' && (
+                                    <>
+                                        <label htmlFor="gender">Gender:</label>
+                                        <select
+                                            className="form-control"
+                                            id="gender"
+                                            value={gender}
+                                            onChange={handleGenderChange}
+                                            required
+                                        >
+                                            <option value="">Select Gender</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </>
                                 )}
-                                <label htmlFor="aadhaar">Aadhaar Card No:</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="aadhaar"
-                                    placeholder="Enter Your Aadhaar Number"
-                                    value={aadhaar}
-                                    onChange={handleAadhaarChange}
-                                    required
-                                />
-                                {aadhaar.replace(/\s/g, '').length > 0 && aadhaar.replace(/\s/g, '').length < 12 && (
-                                    <small className="text-danger">Aadhaar number must be exactly 12 digits long</small>
+                                {userRole === 'patient' && (
+                                    <>
+                                        <label htmlFor="dob">Date of Birth:</label>
+                                        <input
+                                            type="date"
+                                            className="form-control"
+                                            id="dob"
+                                            value={dob}
+                                            onChange={handleDobChange}
+                                            max={maxBirthDate}
+                                            required
+                                        />
+                                        {age !== null && (
+                                            <p>Age: {age} years</p>
+                                        )}
+                                    </>
                                 )}
-
-                                <label htmlFor="address">Address:</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="address"
-                                    placeholder="Enter Your Address"
-                                    required
-                                />
+                                {userRole === 'patient' && (
+                                    <>
+                                        <label htmlFor="aadhaar">Aadhaar Card No:</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="aadhaar"
+                                            placeholder="Enter Your Aadhaar Number"
+                                            value={aadhaar}
+                                            onChange={handleAadhaarChange}
+                                            required
+                                        />
+                                        {aadhaar.replace(/\s/g, '').length > 0 && aadhaar.replace(/\s/g, '').length < 12 && (
+                                            <small className="text-danger">Aadhaar number must be exactly 12 digits long</small>
+                                        )}
+                                    </>
+                                )}
+                                {userRole === 'patient' && (
+                                    <>
+                                        <label htmlFor="address">Address:</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="address"
+                                            placeholder="Enter Your Address"
+                                            value={address}
+                                            onChange={handleAddressChange}
+                                            required
+                                        />
+                                    </>
+                                )}
                             </div>
                             <button type="submit" className="btn btn-primary">Submit</button>
                         </form>
@@ -192,19 +257,7 @@ function Home() {
                         <p className='hero-p'>A repudiandae ipsam labore ipsa voluptatum quidem quae laudantium quisquam aperiam maiores sunt fugit,</p>
                         <p className='hero-p'>deserunt rem suscipit placeat.</p>
                     </div>
-                    <div className="d-flex justify-content-start gap-2">
-                        {/* Conditional rendering based on user role */}
-                        {user && user.role === 'patient' && (
-                            <Link to={'/doctors'} className="btn-get-started scrollto">Book Appointment</Link>
-                        )}
-                        {user && (user.role === 'doctor' || user.role === 'receptionist') && (
-                            <Link to={'/doctors-dashboard'} className="btn-get-started scrollto">Track Appointment</Link>
-                        )}
-                        {/* Show 'Book Appointment' button if no user is logged in */}
-                        {!user && (
-                            <Link to={'/doctors'} className="btn-get-started scrollto">Book Appointment</Link>
-                        )}
-                    </div>
+
                 </div>
             </section>
             <section className="why-us mt-5 mt-md-0">

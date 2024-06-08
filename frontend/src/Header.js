@@ -1,24 +1,18 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import "./App.css";
 import { Container, Row } from "reactstrap";
-
 import Logo from "./images/Logo.jpg";
 import userIcon from "./images/userIcon.jpg";
+import { useUser } from "./UserContext";
+import { toast } from 'react-toastify';
 
 const Header = () => {
   const menuRef = useRef(null);
   const profileActionRef = useRef(null);
   const [profileActionsVisible, setProfileActionsVisible] = useState(false);
-  const [user, setUser] = useState(null);
+  const { user, logout } = useUser();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
 
   const menuToggle = () => menuRef.current.classList.toggle("active-menu");
   const toggleProfileActions = () =>
@@ -26,19 +20,23 @@ const Header = () => {
   const closeProfileActions = () => setProfileActionsVisible(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
+    logout();
+    sessionStorage.removeItem('popupShown'); // Clear popupShown flag on logout
     navigate("/login");
+    toast.success('Logged out')
   };
 
   let nav_links = [
     { path: "home", display: "Home" },
     { path: "about", display: "About" },
-    { path: "contact", display: "Contact" },
+    // { path: "contact", display: "Help" },
   ];
 
-  if (!user || user.role === "patient") {
+  if (!user || !(user.role === "Doctor" || user.role === "receptionist")) {
     nav_links.splice(2, 0, { path: "doctors", display: "Doctors" });
+  }
+  if (user && user.role === "Doctor") {
+    nav_links.splice(2, 0, { path: "doctorsdashboard", display: "Doctors Dashboard" });
   }
 
   return (
@@ -83,21 +81,24 @@ const Header = () => {
                   onClick={toggleProfileActions}
                 />
                 <div
-                  className={`profile-actions ${
-                    profileActionsVisible ? "show_profileActions" : ""
-                  }`}
+                  className={`profile-actions ${profileActionsVisible ? "show_profileActions" : ""
+                    }`}
                   ref={profileActionRef}
                 >
                   <div className="profile_link">
-                    <Link
-                      to="/myprofile"
-                      style={{
-                        textDecoration: "none",
-                        color: "var(--primary-color)",
-                      }}
-                    >
-                      My Profile
-                    </Link>
+                    {user && (
+                      <div>
+                        <Link
+                          to="/myprofile"
+                          style={{
+                            textDecoration: "none",
+                            color: "var(--primary-color)",
+                          }}
+                        >
+                          My Profile
+                        </Link>
+                      </div>
+                    )}
                     {!user ? (
                       <>
                         <Link
