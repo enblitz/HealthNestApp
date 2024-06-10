@@ -4,14 +4,19 @@ services:
   frontend:
     image: jainam05/healthnest:frontend
     ports:
-      - "3001:3000"
+      - "65483:3000"
     depends_on:
       - backend
+    networks:
+      - healthnest-network
+    environment:
+      - REACT_APP_BACKEND_URL=http://backend:49350
+      - WEBSOCKET_URL=ws://backend:49350/ws
 
   backend:
     image: jainam05/healthnest:backend
     ports:
-      - "8085:8081"
+      - "49350:8081"
     depends_on:
       mysql:
         condition: service_healthy
@@ -20,11 +25,13 @@ services:
       DB_USER: example_user
       DB_PASSWORD: example_password
       DB_DATABASE: test
+    networks:
+      - healthnest-network
 
   mysql:
     image: jainam05/healthnest:mysql
     ports:
-      - "3306:3306"
+      - "3307:3306"  # Change this line to avoid port conflict
     environment:
       MYSQL_DATABASE: test
       MYSQL_USER: example_user
@@ -37,6 +44,12 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
+    networks:
+      - healthnest-network
 
 volumes:
   mysql-data:
+
+networks:
+  healthnest-network:
+    driver: bridge
