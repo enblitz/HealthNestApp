@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './doctorsearch.css';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import { BASE_URL } from "./config";
-
+import { Link, useNavigate } from 'react-router-dom';
+import { BASE_URL } from './config';
 
 const Doctors = () => {
   const [filter, setFilter] = useState({ name: '', specialization: '', fees: '', location: '' });
   const [doctors, setDoctors] = useState([]);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(5000);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -28,12 +28,14 @@ const Doctors = () => {
     setFilter({ ...filter, [name]: value });
   };
 
-  const filteredDoctors = doctors.filter((doctor) =>
-    doctor.name.toLowerCase().includes(filter.name.toLowerCase()) &&
-    doctor.specialization.toLowerCase().includes(filter.specialization.toLowerCase()) &&
-    (filter.fees === '' || doctor.fees.includes(filter.fees)) &&
-    (filter.location === '' || doctor.location.toLowerCase().includes(filter.location.toLowerCase()))
-  );
+  const filteredDoctors = doctors.filter((doctor) => {
+    const matchesName = doctor.name.toLowerCase().includes(filter.name.toLowerCase());
+    const matchesSpecialization = filter.specialization === 'all' || doctor.specialization.toLowerCase().includes(filter.specialization.toLowerCase());
+    const matchesFees = filter.fees === '' || doctor.fees.includes(filter.fees);
+    const matchesLocation = filter.location === 'all' || doctor.hospital_loc.toLowerCase().includes(filter.location.toLowerCase());
+
+    return matchesName && matchesSpecialization && matchesFees && matchesLocation;
+  });
 
   const bufferToBase64 = (buffer) => {
     let binary = '';
@@ -44,7 +46,6 @@ const Doctors = () => {
     }
     return window.btoa(binary);
   };
-
 
   const handleMaxPriceChange = (event) => {
     const value = parseInt(event.target.value);
@@ -57,6 +58,15 @@ const Doctors = () => {
     event.preventDefault();
     console.log('Minimum Price:', minPrice);
     console.log('Maximum Price:', maxPrice);
+  };
+
+  const handleBookAppointment = (doctorId) => {
+    if (doctorId) {
+      localStorage.setItem('doctor_id', doctorId);
+      navigate('/appointment');
+    } else {
+      console.error('Doctor ID is undefined');
+    }
   };
 
   return (
@@ -81,7 +91,6 @@ const Doctors = () => {
             <button onClick={handleSubmit} className="price-go">Go</button>
           </div>
         </div>
-        {/* <input type="text" name="location" placeholder="Filter by Location" value={filter.location} onChange={handleFilterChange} className="input" /> */}
         <div>
           <select id="location" name="location" onChange={handleFilterChange} className='input'>
             <option value="all">Filter by location</option>
@@ -101,14 +110,15 @@ const Doctors = () => {
         <div className="cardContainer">
           {filteredDoctors.map((doctor, index) => (
             <div key={index} className="card">
-              <Link to={{ pathname: '/details', state: { doctor } }} style={{ textDecoration: "none", color: "black" }} >
+              <Link to='/details' style={{ textDecoration: "none", color: "black" }} >
                 {/* <img src={data:image/jpeg;base64,${bufferToBase64(doctor.doc_pic)}} alt={doctor.name} className="image" /> */}
-                <h3>Dr. {doctor.name}</h3>
+                <h3>{doctor.name}</h3>
                 <p><strong>Specialization:</strong> {doctor.specialization}</p>
                 <p><strong>Fees:</strong> {doctor.fees}</p>
+                <p><strong>Location:</strong> {doctor.hospital_loc}</p>
                 <p>{doctor.description}</p>
               </Link>
-              <Link to="/appointment" className="bookButton" style={{textDecoration: 'none'}} >Book Appointment</Link>
+              <button onClick={() => handleBookAppointment(doctor.doctor_id)} className="bookButton" style={{ textDecoration: 'none' }}>Book Appointment</button>
             </div>
           ))}
         </div>

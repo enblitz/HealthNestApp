@@ -152,12 +152,11 @@ app.put("/patients/email/:email", (req, res) => {
 });
 
 app.use("/patients", patientRoutes);
-
 app.post('/appointments', (req, res) => {
-  const { doctor_id, patient_id, appointment_date, appointment_time } = req.body;
+  const { doctor_id, patient_id, appointment_date, appointment_time, notes } = req.body;
 
   // Fetch patient data from patients table based on login_id
-  db.query(`SELECT name, email, number FROM patient WHERE login_id =?`, [patient_id], (err, patientData) => {
+  db.query(`SELECT name, email, number FROM patient WHERE login_id = ?`, [patient_id], (err, patientData) => {
     if (err) {
       console.error('Error fetching patient data:', err);
       return res.status(500).json({ error: 'Internal Server Error' });
@@ -167,12 +166,10 @@ app.post('/appointments', (req, res) => {
       return res.status(404).json({ error: 'Patient not found' });
     }
 
-    const patientName = patientData[0].name;
-    const patientEmail = patientData[0].email;
-    const patientNumber = patientData[0].number;
+    const { name: patientName, email: patientEmail, number: patientNumber } = patientData[0];
 
-    const sql = 'INSERT INTO appointments (doctor_id, patient_id, appointment_date, appointment_time, patient_name, patient_email, patient_number) VALUES (?,?,?,?,?,?,?)';
-    const values = [doctor_id, patient_id, appointment_date, appointment_time, patientName, patientEmail, patientNumber];
+    const sql = 'INSERT INTO appointments (doctor_id, patient_id, appointment_date, appointment_time, patient_name, patient_email, patient_number, notes) VALUES (?,?,?,?,?,?,?,?)';
+    const values = [doctor_id, patient_id, appointment_date, appointment_time, patientName, patientEmail, patientNumber, notes];
 
     db.query(sql, values, (err, result) => {
       if (err) {
@@ -182,6 +179,76 @@ app.post('/appointments', (req, res) => {
 
       return res.json({ message: 'Appointment created successfully' });
     });
+  });
+});
+app.get('/appointments/:login_id', (req, res) => {
+  const login_id = req.params.login_id;
+  const sql = 'SELECT patient_name, patient_email, patient_number FROM appointments WHERE patient_id = ?';
+
+  db.query(sql, [login_id], (err, result) => {
+    if (err) {
+      console.error('Error fetching appointments:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+    res.json(result);
+  });
+});
+
+app.get('/appointments/doctor/:doctor_id', (req, res) => {
+  const doctor_id = req.params.doctor_id; // Corrected
+  const sql = 'SELECT * FROM appointments WHERE doctor_id = ?';
+
+  db.query(sql, [doctor_id], (err, result) => {
+    if (err) {
+      console.error('Error fetching appointments:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+    res.json(result);
+  });
+});
+
+
+// Fetch doctors details by email
+app.get("/doctors/email/:email", (req, res) => {
+  const email = req.params.email;
+  const sql = "SELECT * FROM doctor WHERE email = ?";
+
+  db.query(sql, [email], (err, data) => {
+    if (err) {
+      console.error("Error fetching doctors details:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    if (data.length === 0) {
+      return res.status(404).json({ error: "Doctor not found" });
+    }
+
+    const patient = data[0];
+    return res.json(patient);
+  });
+});
+
+
+// Update doctor details by email
+app.put("/doctors/email/:email", (req, res) => {
+  const email = req.params.email;
+  const { name, email: newEmail, number, experience, dob, gender, specialization, fees, address } = req.body;
+
+  const sql = "UPDATE doctor SET name =?, email =?, number =?, specialization =?, dob=?, gender =?, experience =?, address =?, fees =? WHERE email =?";
+
+  db.query(sql, [name, newEmail, number, experience, dob, gender, specialization, address, fees, email], (err, data) => {
+    if (err) {
+      console.error("Error updating doctor details:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    if (data.affectedRows > 0) {
+      return res.json({ message: "Doctor details updated successfully" });
+    } else {
+      return res.status(404).json({ error: "Doctor not found" });
+    }
   });
 });
 
