@@ -36,7 +36,7 @@ const Header = () => {
     nav_links.push({ path: "doctors", display: "Doctors" });
   }
   if (user && user.role === "Doctor") {
-    nav_links.push({ path: "doctorsdashboard", display: "Doctors Dashboard" });
+    nav_links.push({ path: "doctorsdashboard", display: "My Dashboard" });
   }
   if (user && user.role === "Receiptionist") {
     nav_links.push({ path: "receiptionistdashboard", display: "Receiptionist Dashboard" });
@@ -127,20 +127,8 @@ const Header = () => {
                       </>
                     ) : (
                       <>
-                        {user.role === "Admin" && (
-                          <Link
-                            to="/dashboard"
-                            style={{
-                              textDecoration: "none",
-                              color: "var(--primary-color)",
-                            }}
-                            onClick={closeProfileActions}
-                          >
-                            Dashboard
-                          </Link>
-                        )}
                         <Link
-                          to="#"
+                          to="/"
                           onClick={handleLogout}
                           style={{
                             textDecoration: "none",
