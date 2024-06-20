@@ -4,11 +4,15 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import "./App.css";
+import { BASE_URL } from './config';
 
 const theme = createTheme({
   palette: {
     primary: {
       main: '#000080',
+    },
+    secondary: {
+      main: '#4CAF50',
     },
   },
 });
@@ -22,27 +26,42 @@ const DoctorsDashboard = () => {
   const [upcomingAppointments, setUpcomingAppointments] = useState(0);
   const [pastAppointments, setPastAppointments] = useState(0);
 
+  // Simulating doctor login with doctorId
   const doctorId = JSON.parse(localStorage.getItem('user')).doctor_id;
 
   useEffect(() => {
-    fetchAllAppointments();
-  }, []);
+    const storedAppointments = JSON.parse(localStorage.getItem(`appointments_${doctorId}`));
+    if (storedAppointments) {
+      updatePastAppointmentsStatus(storedAppointments);
+      setAllAppointments(storedAppointments);
+      calculateAppointmentCounts(storedAppointments);
+    } else {
+      fetchAppointments();
+    }
+  }, [doctorId]);
 
   useEffect(() => {
     filterAppointmentsByDate(selectedDate);
-  }, [selectedDate]);
+  }, [selectedDate, allAppointments]);
 
-  const fetchAllAppointments = async () => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchAppointments();
+    }, 3000);
+    
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, [doctorId]);
+
+  const fetchAppointments = async () => {
     try {
-      const response = await fetch(`http://localhost:8081/appointments/doctor/${doctorId}`);
+      const response = await fetch(`${BASE_URL}/appointments/doctor/${doctorId}`);
       if (response.ok) {
         const data = await response.json();
-        const updatedData = data.map(appointment => ({
-          ...appointment,
-          status: 'Pending'
-        }));
-        setAllAppointments(updatedData);
-        calculateAppointmentCounts(updatedData);
+        updatePastAppointmentsStatus(data);
+        setAllAppointments(data);
+        calculateAppointmentCounts(data);
+        localStorage.setItem(`appointments_${doctorId}`, JSON.stringify(data));
       } else {
         console.error('Failed to fetch appointments');
         setAllAppointments([]);
@@ -50,6 +69,37 @@ const DoctorsDashboard = () => {
     } catch (error) {
       console.error('Error:', error);
       setAllAppointments([]);
+    }
+  };
+
+  const updatePastAppointmentsStatus = async (appointments) => {
+    const today = new Date();
+    const updatedAppointments = appointments.map(appointment => {
+      const appointmentDate = new Date(appointment.appointment_date);
+      if (appointmentDate < today && appointment.status !== 'Expired') {
+        appointment.status = 'Expired';
+        updateAppointmentStatusInBackend(appointment.appointment_id, 'Expired');
+      }
+      return appointment;
+    });
+    setAllAppointments(updatedAppointments);
+    localStorage.setItem(`appointments_${doctorId}`, JSON.stringify(updatedAppointments));
+  };
+
+  const updateAppointmentStatusInBackend = async (appointmentId, status) => {
+    try {
+      const response = await fetch(`${BASE_URL}/appointments/${appointmentId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status }),
+      });
+      if (!response.ok) {
+        console.error('Failed to update appointment status');
+      }
+    } catch (error) {
+      console.error('Error:', error);
     }
   };
 
@@ -91,17 +141,10 @@ const DoctorsDashboard = () => {
     setSelectedDate(value);
   };
 
-  const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
   const updateAppointmentStatus = async (index, status) => {
     const appointment = appointments[index];
     try {
-      const response = await fetch(`http://localhost:8081/appointments/${appointment.appointment_id}`, {
+      const response = await fetch(`${BASE_URL}/appointments/${appointment.appointment_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -112,10 +155,13 @@ const DoctorsDashboard = () => {
         const updatedAppointments = [...appointments];
         updatedAppointments[index].status = status;
         setAppointments(updatedAppointments);
-        const updatedAllAppointments = allAppointments.map(appt => 
+
+        // Update allAppointments state and save to localStorage for this doctor
+        const updatedAllAppointments = allAppointments.map(appt =>
           appt.appointment_id === appointment.appointment_id ? { ...appt, status } : appt
         );
         setAllAppointments(updatedAllAppointments);
+        localStorage.setItem(`appointments_${doctorId}`, JSON.stringify(updatedAllAppointments));
       } else {
         console.error('Failed to update appointment status');
       }
@@ -216,20 +262,21 @@ const DoctorsDashboard = () => {
                           <TableCell>{appointment.notes}</TableCell>
                           <TableCell>{appointment.status}</TableCell>
                           <TableCell>
-                            {appointment.status === 'Pending' && (
+                            {appointment.status === 'pending' && (
                               <>
                                 <Button
                                   variant="contained"
-                                  color="primary"
+                                  color="secondary"
+                                  style={{ color: 'white' }}
                                   onClick={() => updateAppointmentStatus(index, 'Approved')}
                                 >
                                   Approve
                                 </Button>
                                 <Button
                                   variant="contained"
-                                  color="secondary"
-                                  onClick={() => updateAppointmentStatus(index, 'Rejected')}
+                                  color="primary"
                                   style={{ marginLeft: '8px' }}
+                                  onClick={() => updateAppointmentStatus(index, 'Rejected')}
                                 >
                                   Reject
                                 </Button>
@@ -239,14 +286,15 @@ const DoctorsDashboard = () => {
                               <>
                                 <Button
                                   variant="contained"
-                                  color="primary"
+                                  color="secondary"
+                                  style={{ color: 'white' }}
                                   onClick={() => updateAppointmentStatus(index, 'Completed')}
                                 >
                                   Complete
                                 </Button>
                                 <Button
                                   variant="contained"
-                                  color="secondary"
+                                  color="primary"
                                   onClick={() => updateAppointmentStatus(index, 'Canceled')}
                                   style={{ marginLeft: '8px' }}
                                 >
