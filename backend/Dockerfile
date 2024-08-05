@@ -11,14 +11,14 @@ COPY package*.json ./
 RUN npm install
 
 # Copy server.js, db.js, and the routes directory to the working directory
-# COPY server.js .
-# COPY db.js .
-# COPY routes/ ./routes/
-# COPY Controller/ ./Controller
-COPY . .
+COPY server.js .
+COPY db.js .
+COPY routes/ ./routes/
+COPY Controller/ ./Controller
+# COPY . .
 
 # Build the application (if needed)
-RUN npm run build
+# RUN npm run build
 
 # Expose the port your app runs on
 EXPOSE 3000

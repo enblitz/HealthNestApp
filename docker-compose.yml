@@ -6,11 +6,6 @@ services:
     container_name: healthnest-frontend
     ports:
       - "8000:8000"
-    environment:
-      DB_HOST: ${DB_HOST}
-      DB_USER: ${MYSQL_USER}
-      DB_PASSWORD: ${MYSQL_PASSWORD}
-      DB_DATABASE: ${MYSQL_DATABASE}
     depends_on:
       - backend
     networks:
@@ -20,7 +15,8 @@ services:
       - WEBSOCKET_URL=ws://healthnest-backend:8081/ws
 
   backend:
-    image: enblitztechnologies/healthnest:backend
+    # image: enblitztechnologies/healthnest:backend
+    image: backend:latest
     container_name: healthnest-backend
     ports:
       - "3000:3000"
