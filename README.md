@@ -27,9 +27,9 @@ Start the server
 ```bash
 npm start
 ```
-<br>
-<br>
 
+To Test backend:
+http://3.1.222.229:8081/doctors
 ### Go-to the Frontend folder
 
 ```bash

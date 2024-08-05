@@ -30,7 +30,7 @@ db.connect((err) => {
 
 const doctorRoutes = require("./routes/doctorRoutes");
 const patientRoutes = require("./routes/patinetRoutes");
-const { saveDoctorProfile } = require('../backend/Controller/doctorController');
+const { saveDoctorProfile } = require('./Controller/doctorController');
 
 app.use("/doctors", doctorRoutes);
 app.use("/patients", patientRoutes);
@@ -220,7 +220,7 @@ app.get('/appointments', (req, res) => {
     }
 
     // Return appointments data
-    return res.json(appointments);                                                                                                                  
+    return res.json(appointments);
   });
 });
 
@@ -270,7 +270,7 @@ app.get("/users", (req, res) => {
 app.delete("/users/:id", (req, res) => {
   const userId = req.params.id;
   const sql = "DELETE FROM login WHERE login_id = ?";
-  
+
   db.query(sql, [userId], (err, result) => {
     if (err) {
       console.error("Database error:", err); // Log the detailed error
