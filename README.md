@@ -1,10 +1,22 @@
-# Login-Signup-using-ReactJs-NodeJS-MySQL
-A Login and Signup authentication page implmented using ReactJS,NodeJS and MySQL. It also shows a home page after login which shows 2 templates of ecommerce website.
-<br>
+# HealthNestApp
+This App allow user to list doctor near by location and allow book appoinment.
 
-# BACKEND
-## Go-to the Backend folder
-```bash 
+
+## Run App locally
+```bash
+# Clone this app
+git clone https://github.com/enblitz/HealthNestApp.git
+
+# run this app
+docker-compose up -d
+
+#Acees this app
+http://localhost:65483
+```
+
+## for Developer's
+### Backend - Go-to the Backend folder
+```bash
 cd backend
 ```
 Install all the modules
@@ -18,11 +30,9 @@ npm start
 <br>
 <br>
 
-# FRONTEND
+### Go-to the Frontend folder
 
-## Go-to the Frontend folder
-
-```bash 
+```bash
 cd frontend
 ```
 Install all the modules
@@ -34,8 +44,9 @@ Start the server
 npm start
 ```
 
-# DATABASE
+### DATABASE
 
+```bash
 Setting up the MySQL Database
 Start XAMPP:
 
@@ -52,3 +63,4 @@ Click on the "test" database you just created.
 Go to the "SQL" tab in the navbar.
 Paste your SQL code into the text area provided.
 Click "Go" to execute the SQL code and create the necessary tables.
+```
