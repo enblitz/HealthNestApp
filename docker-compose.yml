@@ -4,19 +4,19 @@ services:
   frontend:
     image: enblitztechnologies/healthnest:frontend
     ports:
-      - "65483:3000"
+      - "3000:3000"
     depends_on:
       - backend
     networks:
       - healthnest-network
     environment:
-      - REACT_APP_BACKEND_URL=http://backend:49350
-      - WEBSOCKET_URL=ws://backend:49350/ws
+      - REACT_APP_BACKEND_URL=http://backend:8081
+      - WEBSOCKET_URL=ws://backend:8081/ws
 
   backend:
     image: enblitztechnologies/healthnest:backend
     ports:
-      - "49350:8081"
+      - "8081:8081"
     depends_on:
       mysql:
         condition: service_healthy
