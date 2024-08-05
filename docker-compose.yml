@@ -3,50 +3,59 @@ version: '3.8'
 services:
   frontend:
     image: enblitztechnologies/healthnest:frontend
+    container_name: healthnest-frontend
     ports:
-      - "3000:3000"
+      - "8000:3000"
     depends_on:
       - backend
     networks:
       - healthnest-network
     environment:
-      - REACT_APP_BACKEND_URL=http://backend:8081
-      - WEBSOCKET_URL=ws://backend:8081/ws
+      - REACT_APP_BACKEND_URL=http://healthnest-backend:8081
+      - WEBSOCKET_URL=ws://healthnest-backend:8081/ws
 
   backend:
-    image: enblitztechnologies/healthnest:backend
+    # image: enblitztechnologies/healthnest:backend
+    image: backend:latest
+    container_name: healthnest-backend
     ports:
       - "8081:8081"
     depends_on:
       mysql:
         condition: service_healthy
     environment:
-      DB_HOST: mysql
-      DB_USER: example_user
-      DB_PASSWORD: example_password
-      DB_DATABASE: test
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_DATABASE: ${MYSQL_DATABASE}
     networks:
       - healthnest-network
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8081/ || exit 1"]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8081/ || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 30s
-    command: ["sh", "-c", "sleep 20 && npm start"]
+    command: [ "sh", "-c", "sleep 20 && npm start" ]
 
   mysql:
     image: enblitztechnologies/healthnest:mysql
+    container_name: healthnest-mysql
     ports:
-      - "3307:3306"  # Change this line to avoid port conflict
+      - "3307:3306" # Change this line to avoid port conflict
     environment:
-      MYSQL_DATABASE: test
-      MYSQL_USER: example_user
-      MYSQL_PASSWORD: example_password
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$MYSQL_PASSWORD"]
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h localhost -p$MYSQL_PASSWORD"
+        ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -56,6 +65,7 @@ services:
 
 volumes:
   mysql-data:
+
 
 networks:
   healthnest-network:

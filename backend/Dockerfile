@@ -15,15 +15,13 @@ COPY server.js .
 COPY db.js .
 COPY routes/ ./routes/
 COPY Controller/ ./Controller
+# COPY . .
+
+# Build the application (if needed)
+# RUN npm run build
 
 # Expose the port your app runs on
-EXPOSE 49350:8081
-
-# Set environment variables
-ENV DB_HOST="mysql"
-ENV DB_USER="example_user"
-ENV DB_PASSWORD="example_password"
-ENV DB_DATABASE="test"
+EXPOSE 3000
 
 # Command to run your application
 CMD ["node", "server.js"]
