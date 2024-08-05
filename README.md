@@ -15,6 +15,11 @@ http://localhost:65483
 ```
 
 ## for Developer's
+
+### Copy env files
+```bash
+cp .env.sample .env
+```
 ### Backend - Go-to the Backend folder
 ```bash
 cd backend
