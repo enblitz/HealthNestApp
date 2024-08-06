@@ -28,6 +28,7 @@ services:
       DB_USER: ${MYSQL_USER}
       DB_PASSWORD: ${MYSQL_PASSWORD}
       DB_DATABASE: ${MYSQL_DATABASE}
+      DB_PORT: ${DB_PORT}
     networks:
       - healthnest-network
     healthcheck:
@@ -48,6 +49,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_PORT: ${DB_PORT}
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
