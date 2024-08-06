@@ -21,7 +21,7 @@ COPY Controller/ ./Controller
 # RUN npm run build
 
 # Expose the port your app runs on
-EXPOSE 3000
+EXPOSE 8081
 
 # Command to run your application
 CMD ["node", "server.js"]
