@@ -16,7 +16,7 @@ services:
 
   backend:
     # image: enblitztechnologies/healthnest:backend
-    image: backend:latest
+    image: enblitztechnologies/healthnest:backend
     container_name: healthnest-backend
     ports:
       - "8081:8081"
@@ -42,7 +42,7 @@ services:
     image: enblitztechnologies/healthnest:mysql
     container_name: healthnest-mysql
     ports:
-      - "3307:3306" # Change this line to avoid port conflict
+      - "3306:3306" # Change this line to avoid port conflict
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
