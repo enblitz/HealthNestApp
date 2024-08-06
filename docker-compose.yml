@@ -16,7 +16,7 @@ services:
 
   backend:
     # image: enblitztechnologies/healthnest:backend
-    image: backend:latest
+    image: enblitztechnologies/healthnest:backend
     container_name: healthnest-backend
     ports:
       - "8081:8081"
