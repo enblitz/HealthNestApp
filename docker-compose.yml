@@ -30,6 +30,7 @@ services:
       DB_PASSWORD: hel#net191
       DB_DATABASE: healthnest-db
       DB_PORT: 3306
+      API_PORT: 3000
     networks:
       - healthnest-network
     healthcheck:
