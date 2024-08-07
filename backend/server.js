@@ -5,9 +5,10 @@ const dotenv = require("dotenv");
 
 // Load environment variables from .env file
 dotenv.config();
-
+console.log("API_PORT " + process.env.API_PORT);
 const app = express();
 const port = process.env.API_PORT || 4000;
+
 
 app.use(cors());
 app.use(express.json());

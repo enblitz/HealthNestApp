@@ -5,7 +5,7 @@ services:
       context: frontend
     container_name: healthnest-frontend
     ports:
-      - "8000:3000"
+      - "3000:3000"
     depends_on:
       - backend
     networks:
@@ -20,7 +20,7 @@ services:
       context: backend
     container_name: healthnest-backend
     ports:
-      - "8081:8081"
+      - "3000:3000"
     depends_on:
       mysql:
         condition: service_healthy
@@ -30,10 +30,11 @@ services:
       DB_PASSWORD: hel#net191
       DB_DATABASE: healthnest-db
       DB_PORT: 3306
+      API_PORT: 3000
     networks:
       - healthnest-network
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8081/ || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:3000/ || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 3
