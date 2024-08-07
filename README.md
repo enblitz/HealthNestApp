@@ -2,10 +2,14 @@
 This App allow user to list doctor near by location and allow book appoinment.
 
 
-## Run App locally
+## For user to test app
 ```bash
 # Clone this app
 git clone https://github.com/enblitz/HealthNestApp.git
+
+# Copy env file
+cp .env.samples .env
+source .env
 
 # run this app
 docker-compose up -d
@@ -14,12 +18,44 @@ docker-compose up -d
 http://localhost:65483
 ```
 
-## for Developer's
+## Dev's: to contribute in this app
 
-### Copy env files
+### Setup Development env.
 ```bash
 cp .env.sample .env
 ```
+
+### Setup Database
+
+
+1. Install Database using `brew install mysql` or using `xampp`
+2. Setup database - create user and database
+    ```sql
+    -- Database user Creation
+    CREATE USER 'healthnest'@'%' IDENTIFIED WITH mysql_native_password BY 'hel#net191';
+
+    -- Various Grant Permissions for DB-User
+    GRANT CREATE, ALTER, DROP, INSERT, UPDATE, DELETE, SELECT, REFERENCES, RELOAD on *.* TO 'healthnest'@'%' WITH GRANT OPTION;
+
+    -- Database Creation
+    CREATE DATABASE `healthnest-db`;
+
+    -- Grant Privilege to the DB User
+    GRANT ALL PRIVILEGES ON `healthnest-db`.* TO 'healthnest'@'%';
+
+    -- Reloading Privileges
+    FLUSH PRIVILEGES;
+
+    -- View the DB-User Permission
+    SHOW GRANTS FOR 'healthnest'@'%';
+    ```
+3. Setup database - create tables
+    ```bash
+    mysql -uroot
+    use healthnest-db;
+    source database/tables.sql
+    ```
+
 ### Backend - Go-to the Backend folder
 ```bash
 cd backend
@@ -49,23 +85,3 @@ Start the server
 npm start
 ```
 
-### DATABASE
-
-```bash
-Setting up the MySQL Database
-Start XAMPP:
-
-Open XAMPP Control Panel.
-Start Apache and MySQL.
-Create the Database:
-
-Open your web browser and go to http://localhost/phpmyadmin. or click on admin near the mysql button in controller of xampp.
-Click on the "Databases" tab.
-In the "Create database" field, enter test and click "Create".
-Import the SQL Schema:
-
-Click on the "test" database you just created.
-Go to the "SQL" tab in the navbar.
-Paste your SQL code into the text area provided.
-Click "Go" to execute the SQL code and create the necessary tables.
-```
