@@ -39,6 +39,11 @@ services:
       DB_USER: example_user
       DB_PASSWORD: example_password
       DB_DATABASE: test
+#       DB_HOST: ${DB_HOST}
+#       DB_USER: ${MYSQL_USER}
+#       DB_PASSWORD: ${MYSQL_PASSWORD}
+#       DB_DATABASE: ${MYSQL_DATABASE}
+#       DB_PORT: ${DB_PORT}
     networks:
       - healthnest-network
     healthcheck:
@@ -65,7 +70,12 @@ services:
     environment:
       MYSQL_DATABASE: test
       MYSQL_USER: user
-      MYSQL_PASSWORD: root
+#       MYSQL_DATABASE: ${MYSQL_DATABASE}
+#       MYSQL_USER: ${MYSQL_USER}
+#       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+#       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+#       DB_PORT: ${DB_PORT}
+
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:

@@ -11,11 +11,7 @@ COPY package*.json ./
 RUN npm install
 
 # Copy server.js, db.js, and the routes directory to the working directory
-COPY server.js .
-COPY db.js .
-COPY routes/ ./routes/
-COPY Controller/ ./Controller
-# COPY . .
+COPY . .
 
 # Build the application (if needed)
 # RUN npm run build
