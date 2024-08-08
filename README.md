@@ -33,9 +33,11 @@ cp .env.sample .env
     ```sql
     -- Database user Creation
     CREATE USER 'healthnest'@'%' IDENTIFIED WITH mysql_native_password BY 'hel#net191';
+    CREATE USER `healthnest`@`%` IDENTIFIED BY 'hel#net191';
 
     -- Various Grant Permissions for DB-User
     GRANT CREATE, ALTER, DROP, INSERT, UPDATE, DELETE, SELECT, REFERENCES, RELOAD on *.* TO 'healthnest'@'%' WITH GRANT OPTION;
+    GRANT CREATE, ALTER, DROP, INSERT, UPDATE, DELETE, SELECT, REFERENCES, RELOAD on *.* TO `healthnest`@`%` WITH GRANT OPTION;
 
     -- Database Creation
     CREATE DATABASE `healthnest-db`;
@@ -47,7 +49,7 @@ cp .env.sample .env
     FLUSH PRIVILEGES;
 
     -- View the DB-User Permission
-    SHOW GRANTS FOR 'healthnest'@'%';
+    SHOW GRANTS FOR `healthnest`@`%`;
     ```
 3. Setup database - create tables
     ```bash
