@@ -1,12 +1,12 @@
-const db = require("../db");
+const db = require('../db');
 
 // Get all doctors
 exports.getAllDoctors = (req, res) => {
-  const sql = "SELECT * FROM doctor";
+  const sql = 'SELECT * FROM doctor';
   db.query(sql, (err, data) => {
     if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json("Error");
+      console.error('Database error:', err);
+      return res.status(500).json('Error');
     }
     return res.json(data);
   });
@@ -14,16 +14,16 @@ exports.getAllDoctors = (req, res) => {
 
 // Get doctor by doctor_id
 exports.getDoctorById = (req, res) => {
-  const sql = "SELECT * FROM doctor WHERE doctor_id = ?";
+  const sql = 'SELECT * FROM doctor WHERE doctor_id = ?';
   db.query(sql, [req.params.id], (err, data) => {
     if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json("Error");
+      console.error('Database error:', err);
+      return res.status(500).json('Error');
     }
     if (data.length > 0) {
       return res.json(data[0]);
     } else {
-      return res.status(404).json("Doctor not found");
+      return res.status(404).json('Doctor not found');
     }
   });
 };
@@ -48,18 +48,17 @@ exports.createDoctor = (req, res) => {
     req.body.experience,
     req.body.doc_pic,
     req.body.dob, // added dob
-    req.body.hospital_loc // added hospital_loc
+    req.body.hospital_loc, // added hospital_loc
   ];
 
   db.query(sql, [values], (err, data) => {
     if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json("Error");
+      console.error('Database error:', err);
+      return res.status(500).json('Error');
     }
-    return res.json("Success");
+    return res.json('Success');
   });
 };
-
 
 // Update doctor by doctor_id
 exports.updateDoctorById = (req, res) => {
@@ -83,95 +82,127 @@ exports.updateDoctorById = (req, res) => {
     req.body.education,
     req.body.doc_pic,
     req.body.dob, // added dob
-    req.params.id
+    req.params.id,
   ];
 
   db.query(sql, values, (err, data) => {
     if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json("Error");
+      console.error('Database error:', err);
+      return res.status(500).json('Error');
     }
     if (data.affectedRows > 0) {
-      return res.json("Success");
+      return res.json('Success');
     } else {
-      return res.status(404).json("Doctor not found");
+      return res.status(404).json('Doctor not found');
     }
   });
 };
 
-
 // Delete doctor by doctor_id
 exports.deleteDoctorById = (req, res) => {
-  const sql = "DELETE FROM doctor WHERE doctor_id = ?";
+  const sql = 'DELETE FROM doctor WHERE doctor_id = ?';
   db.query(sql, [req.params.id], (err, data) => {
     if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json("Error");
+      console.error('Database error:', err);
+      return res.status(500).json('Error');
     }
     if (data.affectedRows > 0) {
-      return res.json("Success");
+      return res.json('Success');
     } else {
-      return res.status(404).json("Doctor not found");
+      return res.status(404).json('Doctor not found');
     }
   });
 };
 
 exports.saveDoctorProfile = (req, res) => {
-  const { mobile, gender, experience, specialization, fees, hospital, hospital_loc, education, email, dob } = req.body;
+  const {
+    mobile,
+    gender,
+    experience,
+    specialization,
+    fees,
+    hospital,
+    hospital_loc,
+    education,
+    email,
+    dob,
+  } = req.body;
 
   // Check if the user exists in the login table
-  const checkUserSql = "SELECT login_id, name, email, password, role FROM login WHERE email = ?";
+  const checkUserSql =
+    'SELECT login_id, name, email, password, role FROM login WHERE email = ?';
   db.query(checkUserSql, [email], (err, result) => {
     if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json({ error: "Failed to save profile" });
+      console.error('Database error:', err);
+      return res.status(500).json({ error: 'Failed to save profile' });
     }
 
     if (result.length === 0) {
       // User not found in the login table
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     const { login_id } = result[0];
 
     // Check if the doctor already exists
-    const checkDoctorSql = "SELECT * FROM doctor WHERE login_id = ?";
+    const checkDoctorSql = 'SELECT * FROM doctor WHERE login_id = ?';
     db.query(checkDoctorSql, [login_id], (err, existingDoctor) => {
       if (err) {
-        console.error("Database error:", err);
-        return res.status(500).json({ error: "Failed to save profile" });
+        console.error('Database error:', err);
+        return res.status(500).json({ error: 'Failed to save profile' });
       }
 
       if (existingDoctor.length > 0) {
         // Update the existing doctor record
         const updateSql =
-          "UPDATE doctor SET number = ?, gender = ?, experience = ?, education = ?, specialization = ?, fees = ?, hospital = ?, hospital_loc = ?, dob = ? WHERE login_id = ?";
-        const updateValues = [mobile, gender, experience, education, specialization, fees, hospital, hospital_loc, dob, login_id];
+          'UPDATE doctor SET number = ?, gender = ?, experience = ?, education = ?, specialization = ?, fees = ?, hospital = ?, hospital_loc = ?, dob = ? WHERE login_id = ?';
+        const updateValues = [
+          mobile,
+          gender,
+          experience,
+          education,
+          specialization,
+          fees,
+          hospital,
+          hospital_loc,
+          dob,
+          login_id,
+        ];
 
         db.query(updateSql, updateValues, (err, updateResult) => {
           if (err) {
-            console.error("Error updating doctor details:", err);
-            return res.status(500).json({ error: "Internal Server Error" });
+            console.error('Error updating doctor details:', err);
+            return res.status(500).json({ error: 'Internal Server Error' });
           }
 
-          return res.json({ message: "Doctor details updated successfully" });
+          return res.json({ message: 'Doctor details updated successfully' });
         });
       } else {
         // Insert new doctor record if not found (optional based on your application logic)
         const insertSql =
-          "INSERT INTO doctor (login_id, number, gender, experience, education, specialization, fees, hospital, hospital_loc, dob) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        const insertValues = [login_id, mobile, gender, experience, education, specialization, fees, hospital, hospital_loc, dob];
+          'INSERT INTO doctor (login_id, number, gender, experience, education, specialization, fees, hospital, hospital_loc, dob) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        const insertValues = [
+          login_id,
+          mobile,
+          gender,
+          experience,
+          education,
+          specialization,
+          fees,
+          hospital,
+          hospital_loc,
+          dob,
+        ];
 
         db.query(insertSql, insertValues, (err, insertResult) => {
           if (err) {
-            console.error("Error inserting new doctor:", err);
-            return res.status(500).json({ error: "Internal Server Error" });
+            console.error('Error inserting new doctor:', err);
+            return res.status(500).json({ error: 'Internal Server Error' });
           }
 
-          return res.json({ message: "Doctor profile created successfully" });
+          return res.json({ message: 'Doctor profile created successfully' });
         });
       }
     });
   });
 };
-
