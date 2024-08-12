@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'reactstrap';
-import './Admin.css'
+import './Admin.css';
 import { BASE_URL } from '../config';
 
 const AllAppointments = () => {
@@ -48,21 +48,20 @@ const AllAppointments = () => {
                 </tr>
               </thead>
               <tbody>
-                {appointments.map(appointment => (
-                    <tr key={appointment.appointment_id}>
-                      <td>{appointment.appointment_id}</td>
-                      <td>{appointment.doctor_id}</td>
-                      <td>{appointment.patient_id}</td>
-                      <td>{appointment.notes}</td>
-                      <td>{appointment.appointment_date}</td>
-                      <td>{appointment.appointment_time}</td>
-                      <td>{appointment.patient_name}</td>
-                      <td>{appointment.patient_email}</td>
-                      <td>{appointment.patient_number}</td>
-                      <td>{appointment.status}</td>
-                    </tr>
-                  ))
-                }
+                {appointments.map((appointment) => (
+                  <tr key={appointment.appointment_id}>
+                    <td>{appointment.appointment_id}</td>
+                    <td>{appointment.doctor_id}</td>
+                    <td>{appointment.patient_id}</td>
+                    <td>{appointment.notes}</td>
+                    <td>{appointment.appointment_date}</td>
+                    <td>{appointment.appointment_time}</td>
+                    <td>{appointment.patient_name}</td>
+                    <td>{appointment.patient_email}</td>
+                    <td>{appointment.patient_number}</td>
+                    <td>{appointment.status}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </Col>

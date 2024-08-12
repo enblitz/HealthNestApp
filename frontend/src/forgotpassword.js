@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import ForgotPasswordValidation from "./ForgotPasswordValidation";
-import { BASE_URL } from "./config";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import ForgotPasswordValidation from './ForgotPasswordValidation';
+import { BASE_URL } from './config';
 
 function ForgotPassword() {
   const [values, setValues] = useState({
-    email: "",
-    newPassword: "",
-    confirmPassword: "",
-    role: "Doctor", // Default role for password reset
+    email: '',
+    newPassword: '',
+    confirmPassword: '',
+    role: 'Doctor', // Default role for password reset
   });
 
   const [errors, setErrors] = useState({});
@@ -25,7 +25,7 @@ function ForgotPassword() {
     const { email, role } = values;
 
     if (!email || !role) {
-      setErrors({ email: "Email is required", role: "Role is required" });
+      setErrors({ email: 'Email is required', role: 'Role is required' });
       return;
     }
 
@@ -33,17 +33,17 @@ function ForgotPassword() {
     axios
       .post(`${BASE_URL}/forgotpassword`, { email, role })
       .then((res) => {
-        console.log("Verification response:", res.data); // Log server response
-        if (res.data.status === "Success") {
+        console.log('Verification response:', res.data); // Log server response
+        if (res.data.status === 'Success') {
           setIsVerified(true);
           setErrors({});
         } else {
-          alert(res.data.message || "Verification failed");
+          alert(res.data.message || 'Verification failed');
         }
       })
       .catch((err) => {
-        console.error("Error in Axios request:", err);
-        alert("Error verifying email and role");
+        console.error('Error in Axios request:', err);
+        alert('Error verifying email and role');
       });
   };
 
@@ -60,16 +60,16 @@ function ForgotPassword() {
           role: values.role,
         })
         .then((res) => {
-          if (res.data.status === "Success") {
-            alert("Password updated successfully");
-            navigate("/login");
+          if (res.data.status === 'Success') {
+            alert('Password updated successfully');
+            navigate('/login');
           } else {
-            alert(res.data.message || "Error updating password");
+            alert(res.data.message || 'Error updating password');
           }
         })
         .catch((err) => {
-          console.error("Error in Axios request:", err);
-          alert("Error updating password");
+          console.error('Error in Axios request:', err);
+          alert('Error updating password');
         });
     }
   };
@@ -144,7 +144,7 @@ function ForgotPassword() {
             </>
           )}
           <button type="submit" className="btn btn-success w-100">
-            <strong>{isVerified ? "Update Password" : "Verify"}</strong>
+            <strong>{isVerified ? 'Update Password' : 'Verify'}</strong>
           </button>
           <br />
           <br />

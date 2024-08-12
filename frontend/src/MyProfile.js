@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
-import { AiOutlineUser } from "react-icons/ai";
+import { AiOutlineUser } from 'react-icons/ai';
 import axios from 'axios';
-import "./App.css"
+import './App.css';
 import { BASE_URL } from './config';
 
 const AccountDetails = ({ user }) => {
@@ -78,35 +78,35 @@ const MyAppointments = () => {
       {appointments.length === 0 ? (
         <p>You have not made any appointments.</p>
       ) : (
-      <table className="table-ap">
-        <thead>
-          <tr>
-            <th>Appointment ID</th>
-            <th>Doctor Name</th>
-            <th>Appointment Date</th>
-            <th>Appointment Time</th>
-            <th>Appointment Created (Date)</th>
-            <th>Appointment Created (Time)</th>
-            <th>Reason</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {appointments.map(appointment => (
-            <tr key={appointment.login_id}>
-              <td>{appointment.appointment_id}</td>
-              <td>{appointment.doctor_name}</td>
-              <td>{appointment.appointment_date}</td>
-              <td>{appointment.appointment_time}</td>
-              <td>{formatDate(appointment.created_at)}</td>
-              <td>{formatTime(appointment.created_at)}</td>
-              {/* <td>{(appointment.created_at)}</td> */}
-              <td>{appointment.notes}</td>
-              <td>{appointment.status}</td>
+        <table className="table-ap">
+          <thead>
+            <tr>
+              <th>Appointment ID</th>
+              <th>Doctor Name</th>
+              <th>Appointment Date</th>
+              <th>Appointment Time</th>
+              <th>Appointment Created (Date)</th>
+              <th>Appointment Created (Time)</th>
+              <th>Reason</th>
+              <th>Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {appointments.map((appointment) => (
+              <tr key={appointment.login_id}>
+                <td>{appointment.appointment_id}</td>
+                <td>{appointment.doctor_name}</td>
+                <td>{appointment.appointment_date}</td>
+                <td>{appointment.appointment_time}</td>
+                <td>{formatDate(appointment.created_at)}</td>
+                <td>{formatTime(appointment.created_at)}</td>
+                {/* <td>{(appointment.created_at)}</td> */}
+                <td>{appointment.notes}</td>
+                <td>{appointment.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );
@@ -114,27 +114,27 @@ const MyAppointments = () => {
 
 const UpdateProfile = ({ user }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    number: "",
-    adhar_no: "",
-    dob: "",
-    gender: "",
-    insurance: "",
-    address: "",
+    name: '',
+    email: '',
+    number: '',
+    adhar_no: '',
+    dob: '',
+    gender: '',
+    insurance: '',
+    address: '',
   });
 
   useEffect(() => {
     if (user) {
       setFormData({
-        name: user.name || "",
-        email: user.email || "",
-        number: user.number || "",
-        adhar_no: user.adhar_no || "",
-        dob: user.dob ? new Date(user.dob).toISOString().split('T')[0] : "",
-        gender: user.gender || "",
-        insurance: user.insurance || "",
-        address: user.address || "",
+        name: user.name || '',
+        email: user.email || '',
+        number: user.number || '',
+        adhar_no: user.adhar_no || '',
+        dob: user.dob ? new Date(user.dob).toISOString().split('T')[0] : '',
+        gender: user.gender || '',
+        insurance: user.insurance || '',
+        address: user.address || '',
       });
     }
   }, [user]);
@@ -147,29 +147,34 @@ const UpdateProfile = ({ user }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const storedUser = JSON.parse(localStorage.getItem("user"));
-      const response = await axios.put(`${BASE_URL}/patients/email/${storedUser.email}`, formData);
-      console.log("Update response:", response);
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      const response = await axios.put(
+        `${BASE_URL}/patients/email/${storedUser.email}`,
+        formData
+      );
+      console.log('Update response:', response);
       if (response.status === 200) {
-        alert("Profile updated successfully");
+        alert('Profile updated successfully');
       } else {
-        console.error("Failed to update profile:", response.data);
-        alert("Failed to update profile:" `${response.data.message || response.status}`);
+        console.error('Failed to update profile:', response.data);
+        alert(
+          'Failed to update profile:'`${response.data.message || response.status}`
+        );
       }
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error('Error updating profile:', error);
       if (error.response) {
-        console.error("Error response data:", error.response.data);
-        alert("Failed to update profile:" `${error.response.data.message || error.response.status}`);
+        console.error('Error response data:', error.response.data);
+        alert(
+          'Failed to update profile:'`${error.response.data.message || error.response.status}`
+        );
       } else {
-        alert("Failed to update profile: An unknown error occurred.");
+        alert('Failed to update profile: An unknown error occurred.');
       }
     }
   };
 
-
-
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <div className="update-profile">
@@ -288,17 +293,19 @@ const MyProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const storedUser = JSON.parse(localStorage.getItem('user'));
 
     if (storedUser && storedUser.email) {
       const fetchUserDetails = async () => {
         try {
           setIsLoading(true);
           // Use the email to fetch the login_id and user details
-          const response = await axios.get(`${BASE_URL}/patients/email/${storedUser.email}`);
+          const response = await axios.get(
+            `${BASE_URL}/patients/email/${storedUser.email}`
+          );
           setUser(response.data);
         } catch (error) {
-          console.error("Error fetching user details:", error);
+          console.error('Error fetching user details:', error);
         } finally {
           setIsLoading(false);
         }
@@ -337,13 +344,15 @@ const MyProfile = () => {
       <div className="profile-content">
         <Routes>
           <Route path="/" element={<AccountDetails user={user} />} />
-          <Route path="myappointments" element={<MyAppointments user={user} />} />
+          <Route
+            path="myappointments"
+            element={<MyAppointments user={user} />}
+          />
           <Route path="updateprofile" element={<UpdateProfile user={user} />} />
         </Routes>
       </div>
     </div>
   );
 };
-
 
 export default MyProfile;

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -25,13 +24,13 @@ const AccountDetails = ({ user }) => {
 
 const UpdateProfile = ({ user }) => {
   const [formData, setFormData] = useState({
-    name: user.name || "",
-    number: user.number || "",
-    gender: user.gender || "",
-    experience: user.experience || "",
-    specialization: user.specialization || "",
-    hospital: user.hospital || "",
-    fees: user.fees || "",
+    name: user.name || '',
+    number: user.number || '',
+    gender: user.gender || '',
+    experience: user.experience || '',
+    specialization: user.specialization || '',
+    hospital: user.hospital || '',
+    fees: user.fees || '',
   });
 
   const handleChange = (e) => {
@@ -42,12 +41,17 @@ const UpdateProfile = ({ user }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`${BASE_URL}/doctors/email/${user.email}`, formData);
-      console.log("Update response:", response);
-      alert("Profile updated successfully");
+      const response = await axios.put(
+        `${BASE_URL}/doctors/email/${user.email}`,
+        formData
+      );
+      console.log('Update response:', response);
+      alert('Profile updated successfully');
     } catch (error) {
-      console.error("Failed to update profile:", error);
-      alert(`Failed to update profile: ${error.message || error.response.status}`);
+      console.error('Failed to update profile:', error);
+      alert(
+        `Failed to update profile: ${error.message || error.response.status}`
+      );
     }
   };
 
@@ -56,25 +60,30 @@ const UpdateProfile = ({ user }) => {
       <form onSubmit={handleSubmit}>
         <label>
           Name:
-          <input type="text" name="name" value={formData.name} onChange={handleChange} />
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+          />
         </label>
         <label>
           Email:
           <input type="text" name="email" value={user.email} readOnly />
         </label>
         <label>
-            Mobile No:
-            <input
-              type="tel"
-              name="number"
-              value={formData.number}
-              onChange={handleChange}
-              required
-              minLength="10"
-              maxLength="10"
-              pattern="[0-9]{10}"
-            />
-          </label>
+          Mobile No:
+          <input
+            type="tel"
+            name="number"
+            value={formData.number}
+            onChange={handleChange}
+            required
+            minLength="10"
+            maxLength="10"
+            pattern="[0-9]{10}"
+          />
+        </label>
         <label>
           Gender:
           <select name="gender" value={formData.gender} onChange={handleChange}>
@@ -85,19 +94,39 @@ const UpdateProfile = ({ user }) => {
         </label>
         <label>
           Experience:
-          <input type="text" name="experience" value={formData.experience} onChange={handleChange} />
+          <input
+            type="text"
+            name="experience"
+            value={formData.experience}
+            onChange={handleChange}
+          />
         </label>
         <label>
           Specialization:
-          <input type="text" name="specialization" value={formData.specialization} onChange={handleChange} />
+          <input
+            type="text"
+            name="specialization"
+            value={formData.specialization}
+            onChange={handleChange}
+          />
         </label>
         <label>
           Hospital:
-          <input type="text" name="hospital" value={formData.hospital} onChange={handleChange} />
+          <input
+            type="text"
+            name="hospital"
+            value={formData.hospital}
+            onChange={handleChange}
+          />
         </label>
         <label>
           Fees:
-          <input type="text" name="fees" value={formData.fees} onChange={handleChange} />
+          <input
+            type="text"
+            name="fees"
+            value={formData.fees}
+            onChange={handleChange}
+          />
         </label>
         <button type="submit">Update Profile</button>
       </form>
@@ -110,17 +139,19 @@ const DoctorsProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const storedUser = JSON.parse(localStorage.getItem('user'));
 
     if (storedUser && storedUser.email) {
       const fetchUserDetails = async () => {
         try {
           setIsLoading(true);
           const role = storedUser.role;
-          const response = await axios.get(`${BASE_URL}/doctors/email/${storedUser.email}`);
+          const response = await axios.get(
+            `${BASE_URL}/doctors/email/${storedUser.email}`
+          );
           setUser(response.data);
         } catch (error) {
-          console.error("Error fetching user details:", error);
+          console.error('Error fetching user details:', error);
         } finally {
           setIsLoading(false);
         }
@@ -164,4 +195,3 @@ const DoctorsProfile = () => {
 };
 
 export default DoctorsProfile;
-

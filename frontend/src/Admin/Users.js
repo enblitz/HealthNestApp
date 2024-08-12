@@ -29,12 +29,19 @@ const Users = () => {
   const deleteUser = async (loginId) => {
     try {
       await axios.delete(`${BASE_URL}/users/${loginId}`);
-      setUsers(users.filter(user => user.login_id !== loginId));
-      setFilteredUsers(filteredUsers.filter(user => user.login_id !== loginId)); // Update filteredUsers after deletion
+      setUsers(users.filter((user) => user.login_id !== loginId));
+      setFilteredUsers(
+        filteredUsers.filter((user) => user.login_id !== loginId)
+      ); // Update filteredUsers after deletion
       toast.success('User deleted!');
     } catch (error) {
-      console.error('Error deleting user:', error.response?.data || error.message);
-      toast.error(`Error deleting user: ${error.response?.data?.details || error.message}`);
+      console.error(
+        'Error deleting user:',
+        error.response?.data || error.message
+      );
+      toast.error(
+        `Error deleting user: ${error.response?.data?.details || error.message}`
+      );
     }
   };
 
@@ -42,7 +49,7 @@ const Users = () => {
     if (role === 'all') {
       setFilteredUsers(users); // Show all users
     } else {
-      const filtered = users.filter(user => user.role === role);
+      const filtered = users.filter((user) => user.role === role);
       console.log(filtered); // Add this line to log the filtered array
       setFilteredUsers(filtered);
     }
@@ -52,10 +59,25 @@ const Users = () => {
     <section>
       <Container>
         <Row>
-          <Col lg="12" className='text-center'>
-            <button className='user-btn' onClick={() => filterUsersByRole('all')}>All Users</button>
-            <button className='user-btn' onClick={() => filterUsersByRole('Doctor')}>Doctors</button>
-            <button className='user-btn' onClick={() => filterUsersByRole('Patient')}>Patients</button>
+          <Col lg="12" className="text-center">
+            <button
+              className="user-btn"
+              onClick={() => filterUsersByRole('all')}
+            >
+              All Users
+            </button>
+            <button
+              className="user-btn"
+              onClick={() => filterUsersByRole('Doctor')}
+            >
+              Doctors
+            </button>
+            <button
+              className="user-btn"
+              onClick={() => filterUsersByRole('Patient')}
+            >
+              Patients
+            </button>
           </Col>
           <Col lg="12" className="pt-3">
             <table className="table">

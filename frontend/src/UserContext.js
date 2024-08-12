@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext, useMemo } from 'react';
 const UserContext = createContext({
   user: null,
   login: () => {},
-  logout: () => {}
+  logout: () => {},
 }); // Default values for better autocompletion and error handling
 
 export const UserProvider = ({ children }) => {
@@ -23,16 +23,17 @@ export const UserProvider = ({ children }) => {
   };
 
   // useMemo to ensure the value object identity stays consistent across renders if values haven't changed
-  const contextValue = useMemo(() => ({
-    user,
-    login,
-    logout
-  }), [user]);
+  const contextValue = useMemo(
+    () => ({
+      user,
+      login,
+      logout,
+    }),
+    [user]
+  );
 
   return (
-    <UserContext.Provider value={contextValue}>
-      {children}
-    </UserContext.Provider>
+    <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
   );
 };
 
