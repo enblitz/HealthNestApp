@@ -2,10 +2,11 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const { debugLog, debugError } = require('./logger');
 
 // Load environment variables from .env file
 dotenv.config();
-console.log('API_PORT ' + process.env.API_PORT);
+debugLog('API_PORT ' + process.env.API_PORT);
 const app = express();
 const port = process.env.API_PORT || 4000;
 
@@ -23,7 +24,7 @@ const db = mysql.createConnection({
 
 db.connect((err) => {
   if (err) {
-    console.error('Error connecting to the database:', err);
+    debugError('Error connecting to the database:', err);
   } else {
     console.log('Connected to the MySQL database.');
   }
@@ -42,7 +43,7 @@ app.post('/login', (req, res) => {
   const sql = 'SELECT * FROM login WHERE email=? AND role=?';
   db.query(sql, [email, role], (err, data) => {
     if (err) {
-      console.error('Database error:', err);
+      debugError('Database error:', err);
       return res.json({ status: 'Error', message: 'Database error' });
     }
     if (data.length > 0) {
@@ -61,7 +62,7 @@ app.post('/login', (req, res) => {
           const sqlDoctor = 'SELECT * FROM doctor WHERE login_id=?';
           db.query(sqlDoctor, [user.login_id], (err, doctorData) => {
             if (err) {
-              console.error('Error fetching doctor details:', err);
+              debugError('Error fetching doctor details:', err); // Use debugError instead of console.error
               return res.json({
                 status: 'Error',
                 message: 'Error fetching doctor details',
@@ -95,7 +96,7 @@ app.post('/signup', (req, res) => {
     req.body.role,
   ];
 
-  db.query(sql, [values], (err, data) => {
+  db.query(sql, [values], (err) => {
     if (err) {
       return res.json({ status: 'Error', message: 'Error during signup' });
     }
@@ -110,7 +111,7 @@ app.post('/forgotpassword', (req, res) => {
     [req.body.password, req.body.email, req.body.role],
     (err, data) => {
       if (err) {
-        console.error('Error executing query:', err);
+        debugError('Error executing query:', err); // Use debugError instead of console.error
         return res.json({
           status: 'Error',
           message: 'Error updating password',
@@ -138,7 +139,7 @@ app.get('/patients/email/:email', (req, res) => {
 
   db.query(sql, [email], (err, data) => {
     if (err) {
-      console.error('Error fetching patient details:', err);
+      debugError('Error fetching patient details:', err); // Use debugError for logging
       return res.status(500).json({ error: 'Internal Server Error' });
     }
 
@@ -173,7 +174,7 @@ app.put('/patients/email/:email', (req, res) => {
     [name, newEmail, number, adhar_no, dob, gender, insurance, address, email],
     (err, data) => {
       if (err) {
-        console.error('Error updating patient details:', err);
+        debugError('Error updating patient details:', err); // Replace console.error with debugError
         return res.status(500).json({ error: 'Internal Server Error' });
       }
 
@@ -204,7 +205,7 @@ app.post('/appointments', (req, res) => {
     [patient_id],
     (err, patientData) => {
       if (err) {
-        console.error('Error fetching patient data:', err);
+        debugError('Error fetching patient data:', err); // Replace console.error with debugError
         return res.status(500).json({ error: 'Internal Server Error' });
       }
 
@@ -232,9 +233,9 @@ app.post('/appointments', (req, res) => {
         status,
       ];
 
-      db.query(sql, values, (err, result) => {
+      db.query(sql, values, (err) => {
         if (err) {
-          console.error('Error creating appointment:', err);
+          debugError('Error creating appointment:', err); // Replace console.error with debugError
           return res.status(500).json({ error: 'Internal Server Error' });
         }
 
@@ -250,7 +251,7 @@ app.get('/appointments', (req, res) => {
 
   db.query(sql, (err, appointments) => {
     if (err) {
-      console.error('Error fetching appointments:', err);
+      debugError('Error fetching appointments:', err); // Replace console.error with debugError
       return res.status(500).json({ error: 'Internal Server Error' });
     }
 
@@ -274,7 +275,7 @@ app.get('/appointments/:login_id', (req, res) => {
 
   db.query(sql, [login_id], (err, result) => {
     if (err) {
-      console.error('Error fetching appointments:', err);
+      debugError('Error fetching appointments:', err); // Replace console.error with debugError
       res.status(500).json({ error: 'Internal Server Error' });
       return;
     }
@@ -288,7 +289,7 @@ app.get('/appointments/doctor/:doctor_id', (req, res) => {
 
   db.query(sql, [doctor_id], (err, result) => {
     if (err) {
-      console.error('Error fetching appointments:', err);
+      debugError('Error fetching appointments:', err); // Replace console.error with debugError
       res.status(500).json({ error: 'Internal Server Error' });
       return;
     }
@@ -301,7 +302,7 @@ app.get('/users', (req, res) => {
   const sql = 'SELECT * FROM login';
   db.query(sql, (err, data) => {
     if (err) {
-      console.error('Database error:', err);
+      debugError('Database error:', err); // Replace console.error with debugError
       return res.status(500).json('Error');
     }
     return res.json(data);
@@ -313,7 +314,7 @@ app.delete('/users/:id', (req, res) => {
 
   db.query(sql, [userId], (err, result) => {
     if (err) {
-      console.error('Database error:', err); // Log the detailed error
+      debugError('Database error:', err); // Replace console.error with debugError
       return res
         .status(500)
         .json({ error: 'Error deleting user', details: err });
@@ -332,7 +333,7 @@ app.get('/doctors/email/:email', (req, res) => {
 
   db.query(sql, [email], (err, data) => {
     if (err) {
-      console.error('Error fetching doctors details:', err);
+      debugError('Error fetching doctor details:', err); // Replace console.error with debugError
       return res.status(500).json({ error: 'Internal Server Error' });
     }
 
@@ -350,7 +351,7 @@ app.put('/doctors/email/:email', (req, res) => {
   const { name, number, gender, experience, specialization, hospital, fees } =
     req.body;
 
-  console.log('Updating doctor details:', req.body);
+  debugLog('Updating doctor details:', req.body); // Use debugLog
 
   const sql =
     'UPDATE doctor SET name = ?, number = ?, gender = ?, experience = ?, specialization = ?, hospital = ?, fees = ? WHERE email = ?';
@@ -367,7 +368,7 @@ app.put('/doctors/email/:email', (req, res) => {
 
   db.query(sql, values, (err, result) => {
     if (err) {
-      console.error('Error updating doctor details:', err);
+      debugError('Error updating doctor details:', err); // Replace console.error with debugError
       return res
         .status(500)
         .json({ error: 'Internal Server Error', details: err.message });
@@ -381,7 +382,9 @@ app.put('/doctors/email/:email', (req, res) => {
   });
 });
 
-app.listen(port, () => console.log(`Server running on port ${port}`));
+app.listen(port, () => {
+  debugLog(`Server running on port ${port}`); // Replace console.log with debugLog
+});
 
 app.put('/appointments/:appointment_id', (req, res) => {
   const { status } = req.body;
@@ -397,7 +400,7 @@ app.put('/appointments/:appointment_id', (req, res) => {
 
   db.query(sql, values, (err, result) => {
     if (err) {
-      console.error('Error updating appointment status:', err);
+      debugError('Error updating appointment status:', err);
       return res.status(500).json({ error: 'Internal Server Error' });
     }
 
