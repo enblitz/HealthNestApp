@@ -67,74 +67,86 @@ const Header = () => {
                   <span> | {user.role}</span>
                 </div>
               )}
-              <div className="user_icon" onBlur={closeProfileActions}>
-                <img
-                  src={userIcon}
-                  alt="User Icon"
-                  onClick={toggleProfileActions}
-                />
-                <div
-                  className={`profile-actions ${
-                    profileActionsVisible ? 'show_profileActions' : ''
-                  }`}
-                  ref={profileActionRef}
-                >
-                  <div className="profile_link">
-                    {user && (
+              <button
+                className="user_icon"
+                onBlur={closeProfileActions}
+                onClick={toggleProfileActions}
+                aria-label="User profile"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  margin: 0,
+                }}
+              >
+                <img src={userIcon} alt="User Icon" />
+              </button>
+              <div
+                className={`profile-actions ${
+                  profileActionsVisible ? 'show_profileActions' : ''
+                }`}
+                ref={profileActionRef}
+              >
+                <div className="profile_link">
+                  {user ? (
+                    <Link
+                      className="myprofile"
+                      to="/myprofile"
+                      style={{
+                        textDecoration: 'none',
+                        color: 'var(--primary-color)',
+                      }}
+                      onClick={closeProfileActions}
+                    >
+                      My Profile
+                    </Link>
+                  ) : (
+                    <>
                       <Link
-                        className="myprofile"
-                        to="/myprofile"
+                        to="/signup"
                         style={{
                           textDecoration: 'none',
                           color: 'var(--primary-color)',
                         }}
                         onClick={closeProfileActions}
                       >
-                        My Profile
+                        SignUp
                       </Link>
-                    )}
-                    {!user ? (
-                      <>
-                        <Link
-                          to="/signup"
-                          style={{
-                            textDecoration: 'none',
-                            color: 'var(--primary-color)',
-                          }}
-                          onClick={closeProfileActions}
-                        >
-                          SignUp
-                        </Link>
-                        <Link
-                          to="/login"
-                          style={{
-                            textDecoration: 'none',
-                            color: 'var(--primary-color)',
-                          }}
-                          onClick={closeProfileActions}
-                        >
-                          Login
-                        </Link>
-                      </>
-                    ) : (
-                      <>
-                        <Link
-                          to="#"
-                          onClick={handleLogout}
-                          style={{
-                            textDecoration: 'none',
-                            color: 'var(--primary-color)',
-                          }}
-                        >
-                          Logout
-                        </Link>
-                      </>
-                    )}
-                  </div>
+                      <Link
+                        to="/login"
+                        style={{
+                          textDecoration: 'none',
+                          color: 'var(--primary-color)',
+                        }}
+                        onClick={closeProfileActions}
+                      >
+                        Login
+                      </Link>
+                    </>
+                  )}
+                  {user && (
+                    <button
+                      onClick={handleLogout}
+                      style={{
+                        textDecoration: 'none',
+                        color: 'var(--primary-color)',
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        margin: 0,
+                      }}
+                    >
+                      Logout
+                    </button>
+                  )}
                 </div>
               </div>
-              <div className="mobile_menu">
-                <span className="menu_icon" onClick={menuToggle}>
+              <button
+                className="mobile_menu"
+                onClick={menuToggle}
+                aria-label="Toggle Menu"
+              >
+                <span className="menu_icon">
                   <svg
                     width="24"
                     height="24"
@@ -165,7 +177,7 @@ const Header = () => {
                     ></path>
                   </svg>
                 </span>
-              </div>
+              </button>
             </div>
           </div>
         </Row>

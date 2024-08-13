@@ -2,7 +2,7 @@ function ForgotPasswordValidation(values) {
   let errors = {};
   const email_pattern = /\S+@\S+\.\S+/;
   const password_pattern =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#%&])(?=.{8,})/;
 
   if (!values.email) {
     errors.email = 'Email is required';

@@ -2,7 +2,7 @@ function LoginValidation(values) {
   let error = {};
   const email_pattern = /\S+@\S+\.\S+/;
   const password_pattern =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#%&])(?=.{8,})/;
 
   if (values.email === '') {
     error.email = 'Email cannot be empty';

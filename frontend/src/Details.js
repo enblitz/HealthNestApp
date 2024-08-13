@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './Detail.module.css';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom'; // Removed unused 'Link'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { BASE_URL } from './config';
@@ -60,15 +60,19 @@ const Detail = () => {
               <h5 className="mt-2 mb-0">Dr. {doctor.name}</h5>
               <span>{doctor.education}</span>
               <div className="px-4 mt-1">
-                <p className={styles.fonts} align="justify">
+                <p className={styles.fonts} style={{ textAlign: 'justify' }}>
                   {doctor.description}
                 </p>
-                <p align="left">Email: {doctor.email}</p>
-                <p align="left">Hospital: {doctor.hospital}</p>
-                <p align="left">Specialization: {doctor.specialization}</p>
-                <p align="left">Experience: {doctor.experience}</p>
-                <p align="left">Fees: {doctor.fees} INR</p>
-                <p align="left">Address: {doctor.location} </p>
+                <p style={{ textAlign: 'left' }}>Email: {doctor.email}</p>
+                <p style={{ textAlign: 'left' }}>Hospital: {doctor.hospital}</p>
+                <p style={{ textAlign: 'left' }}>
+                  Specialization: {doctor.specialization}
+                </p>
+                <p style={{ textAlign: 'left' }}>
+                  Experience: {doctor.experience}
+                </p>
+                <p style={{ textAlign: 'left' }}>Fees: {doctor.fees} INR</p>
+                <p style={{ textAlign: 'left' }}>Address: {doctor.location}</p>
               </div>
             </div>
           </div>
@@ -77,4 +81,5 @@ const Detail = () => {
     </div>
   );
 };
+
 export default Detail;

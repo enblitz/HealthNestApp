@@ -12,7 +12,7 @@ const Doctors = () => {
     location: '',
   });
   const [doctors, setDoctors] = useState([]);
-  const [minPrice, setMinPrice] = useState(0);
+  const [minPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(5000);
   const navigate = useNavigate();
 
@@ -50,16 +50,6 @@ const Doctors = () => {
       matchesName && matchesSpecialization && matchesFees && matchesLocation
     );
   });
-
-  const bufferToBase64 = (buffer) => {
-    let binary = '';
-    const bytes = new Uint8Array(buffer.data);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return window.btoa(binary);
-  };
 
   const handleMaxPriceChange = (event) => {
     const value = parseInt(event.target.value);
