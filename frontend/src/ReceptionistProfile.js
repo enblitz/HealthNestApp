@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
-import { AiOutlineUser } from "react-icons/ai";
+import { AiOutlineUser } from 'react-icons/ai';
 import axios from 'axios';
-import "./App.css"
-import { BASE_URL } from "./config";
+import './App.css';
+import { BASE_URL } from './config';
 
 const AccountDetails = ({ user }) => {
   const [patient, setPatient] = useState(null);
@@ -38,8 +38,6 @@ const AccountDetails = ({ user }) => {
   );
 };
 
-
-
 const MyAppointments = ({ user }) => {
   const [Appointments, setAppointments] = useState([]);
 
@@ -50,20 +48,24 @@ const MyAppointments = ({ user }) => {
         <p>You have not make any appointments.</p>
       ) : (
         <ul>
-          {Appointments.map(order => (
+          {Appointments.map((order) => (
             <li key={order.id}>
               <p>Appointments ID: {Appointments.id}</p>
               <p>Total: {Appointments.totalAmount}</p>
               <p>Items:</p>
               <ul>
-                {order.cartItems.map(item => (
+                {order.cartItems.map((item) => (
                   <li key={item.id}>
-                    <img src={item.image} alt={item.productName} style={{ maxWidth: '100px' }} />
+                    <img
+                      src={item.image}
+                      alt={item.productName}
+                      style={{ maxWidth: '100px' }}
+                    />
                     <div>
-                      <p>Appointment Id: { }</p>
-                      <p>Doctor's name: { }</p>
-                      <p>Price: { }</p>
-                      <p>Quantity: { }</p>
+                      <p>Appointment Id: {}</p>
+                      <p>Doctor's name: {}</p>
+                      <p>Price: {}</p>
+                      <p>Quantity: {}</p>
                     </div>
                   </li>
                 ))}
@@ -78,27 +80,27 @@ const MyAppointments = ({ user }) => {
 
 const UpdateProfile = ({ user }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    number: "",
-    adhar_no: "",
-    dob: "",
-    gender: "",
-    insurance: "",
-    address: "",
+    name: '',
+    email: '',
+    number: '',
+    adhar_no: '',
+    dob: '',
+    gender: '',
+    insurance: '',
+    address: '',
   });
 
   useEffect(() => {
     if (user) {
       setFormData({
-        name: user.name || "",
-        email: user.email || "",
-        number: user.number || "",
-        adhar_no: user.adhar_no || "",
-        dob: user.dob ? new Date(user.dob).toISOString().split('T')[0] : "",
-        gender: user.gender || "",
-        insurance: user.insurance || "",
-        address: user.address || "",
+        name: user.name || '',
+        email: user.email || '',
+        number: user.number || '',
+        adhar_no: user.adhar_no || '',
+        dob: user.dob ? new Date(user.dob).toISOString().split('T')[0] : '',
+        gender: user.gender || '',
+        insurance: user.insurance || '',
+        address: user.address || '',
       });
     }
   }, [user]);
@@ -111,27 +113,34 @@ const UpdateProfile = ({ user }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const storedUser = JSON.parse(localStorage.getItem("user"));
-      const response = await axios.put(`${BASE_URL}/patients/email/${storedUser.email}`, formData);
-      console.log("Update response:", response);
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      const response = await axios.put(
+        `${BASE_URL}/patients/email/${storedUser.email}`,
+        formData
+      );
+      console.log('Update response:', response);
       if (response.status === 200) {
-        alert("Profile updated successfully");
+        alert('Profile updated successfully');
       } else {
-        console.error("Failed to update profile:", response.data);
-        alert(`Failed to update profile: ${response.data.message || response.status}`);
+        console.error('Failed to update profile:', response.data);
+        alert(
+          `Failed to update profile: ${response.data.message || response.status}`
+        );
       }
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error('Error updating profile:', error);
       if (error.response) {
-        console.error("Error response data:", error.response.data);
-        alert(`Failed to update profile: ${error.response.data.message || error.response.status}`);
+        console.error('Error response data:', error.response.data);
+        alert(
+          `Failed to update profile: ${error.response.data.message || error.response.status}`
+        );
       } else {
-        alert("Failed to update profile: An unknown error occurred.");
+        alert('Failed to update profile: An unknown error occurred.');
       }
     }
   };
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <div className="update-profile">
@@ -150,7 +159,12 @@ const UpdateProfile = ({ user }) => {
         <div>
           <label>
             Email Id:
-            <p className='update-email' style={{ fontWeight: '400', padding: '8px' }}>{formData.email}</p>
+            <p
+              className="update-email"
+              style={{ fontWeight: '400', padding: '8px' }}
+            >
+              {formData.email}
+            </p>
           </label>
         </div>
         <div>
@@ -248,17 +262,19 @@ const MyProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const storedUser = JSON.parse(localStorage.getItem('user'));
 
     if (storedUser && storedUser.email) {
       const fetchUserDetails = async () => {
         try {
           setIsLoading(true);
           // Use the email to fetch the login_id and user details
-          const response = await axios.get(`${BASE_URL}/patients/email/${storedUser.email}`);
+          const response = await axios.get(
+            `${BASE_URL}/patients/email/${storedUser.email}`
+          );
           setUser(response.data);
         } catch (error) {
-          console.error("Error fetching user details:", error);
+          console.error('Error fetching user details:', error);
         } finally {
           setIsLoading(false);
         }
@@ -297,7 +313,10 @@ const MyProfile = () => {
       <div className="profile-content">
         <Routes>
           <Route path="/" element={<AccountDetails user={user} />} />
-          <Route path="myappointments" element={<MyAppointments user={user} />} />
+          <Route
+            path="myappointments"
+            element={<MyAppointments user={user} />}
+          />
           <Route path="updateprofile" element={<UpdateProfile user={user} />} />
         </Routes>
       </div>
@@ -305,8 +324,4 @@ const MyProfile = () => {
   );
 };
 
-
 export default MyProfile;
-
-
-

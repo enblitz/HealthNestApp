@@ -21,7 +21,7 @@ import ProtectedRoute from './ProtectedRoute';
 import Appointment from './Appointment';
 
 import AdminDashboard from './Admin/AdminDashboard';
-import AdminHeader from './Admin/AdminHeader'
+import AdminHeader from './Admin/AdminHeader';
 import Users from './Admin/Users';
 import AllAppointments from './Admin/AllAppointments';
 
@@ -51,7 +51,10 @@ function App() {
         {/* {user && user.email === 'admin@gmail.com' && ( */}
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="dashboard/users" element={<Users />} />
-        <Route path="dashboard/all-appointments" element={<AllAppointments />} />
+        <Route
+          path="dashboard/all-appointments"
+          element={<AllAppointments />}
+        />
         {/* <Route path="/*" element={<ProtectedRoute />}>
           <Route path="dashboard/add-products" element={<AddProducts />} />
           <Route path="dashboard/orders" element={<Orders />} /> 
@@ -63,7 +66,18 @@ function App() {
           <Route path="/appointment" element={<Appointment />} />
         </Route>
         <Route path="/doctorsdashboard" element={<DoctorsDashboard />} />
-        <Route path="myprofile/*" element={userRole === 'Doctor' ? (<DoctorsProfile />) : userRole === 'receptionist' ? (<ReceptionistProfile />) : (<MyProfile />)} />
+        <Route
+          path="myprofile/*"
+          element={
+            userRole === 'Doctor' ? (
+              <DoctorsProfile />
+            ) : userRole === 'receptionist' ? (
+              <ReceptionistProfile />
+            ) : (
+              <MyProfile />
+            )
+          }
+        />
       </Routes>
       <Footer />
     </BrowserRouter>

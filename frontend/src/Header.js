@@ -1,10 +1,10 @@
-import React, { useRef, useState } from "react";
-import { NavLink, Link, useNavigate } from "react-router-dom";
-import "./App.css";
-import { Container, Row } from "reactstrap";
-import Logo from "./images/Logo.jpg";
-import userIcon from "./images/userIcon.jpg";
-import { useUser } from "./UserContext";
+import React, { useRef, useState } from 'react';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
+import './App.css';
+import { Container, Row } from 'reactstrap';
+import Logo from './images/Logo.jpg';
+import userIcon from './images/userIcon.jpg';
+import { useUser } from './UserContext';
 import { toast } from 'react-toastify';
 
 const Header = () => {
@@ -14,7 +14,7 @@ const Header = () => {
   const { user, logout } = useUser();
   const navigate = useNavigate();
 
-  const menuToggle = () => menuRef.current.classList.toggle("active-menu");
+  const menuToggle = () => menuRef.current.classList.toggle('active-menu');
   const toggleProfileActions = () =>
     setProfileActionsVisible(!profileActionsVisible);
   const closeProfileActions = () => setProfileActionsVisible(false);
@@ -24,22 +24,25 @@ const Header = () => {
     sessionStorage.removeItem('popupShown'); // Clear popupShown flag on logout
     toast.success('Logged out');
     closeProfileActions(); // Close profile actions after logout
-    navigate("/");
+    navigate('/');
   };
 
   let nav_links = [
-    { path: "home", display: "Home" },
-    { path: "about", display: "About" },
+    { path: 'home', display: 'Home' },
+    { path: 'about', display: 'About' },
     // { path: "contact", display: "Help" }
   ];
-  if (!user || !(user.role === "Doctor" || user.role === "Receptionist")) {
-    nav_links.push({ path: "doctors", display: "Doctors" });
+  if (!user || !(user.role === 'Doctor' || user.role === 'Receptionist')) {
+    nav_links.push({ path: 'doctors', display: 'Doctors' });
   }
-  if (user && user.role === "Doctor") {
-    nav_links.push({ path: "doctorsdashboard", display: "My Dashboard" });
+  if (user && user.role === 'Doctor') {
+    nav_links.push({ path: 'doctorsdashboard', display: 'My Dashboard' });
   }
-  if (user && user.role === "Receiptionist") {
-    nav_links.push({ path: "receiptionistdashboard", display: "Receiptionist Dashboard" });
+  if (user && user.role === 'Receiptionist') {
+    nav_links.push({
+      path: 'receiptionistdashboard',
+      display: 'Receiptionist Dashboard',
+    });
   }
 
   return (
@@ -57,11 +60,11 @@ const Header = () => {
                     <NavLink
                       to={item.path}
                       className={(navClass) =>
-                        navClass.isActive ? "nav_active" : ""
+                        navClass.isActive ? 'nav_active' : ''
                       }
                       style={{
-                        textDecoration: "none",
-                        color: "var(--primary-color)",
+                        textDecoration: 'none',
+                        color: 'var(--primary-color)',
                       }}
                     >
                       {item.display}
@@ -84,8 +87,9 @@ const Header = () => {
                   onClick={toggleProfileActions}
                 />
                 <div
-                  className={`profile-actions ${profileActionsVisible ? "show_profileActions" : ""
-                    }`}
+                  className={`profile-actions ${
+                    profileActionsVisible ? 'show_profileActions' : ''
+                  }`}
                   ref={profileActionRef}
                 >
                   <div className="profile_link">
@@ -94,8 +98,8 @@ const Header = () => {
                         className="myprofile"
                         to="/myprofile"
                         style={{
-                          textDecoration: "none",
-                          color: "var(--primary-color)",
+                          textDecoration: 'none',
+                          color: 'var(--primary-color)',
                         }}
                         onClick={closeProfileActions}
                       >
@@ -107,8 +111,8 @@ const Header = () => {
                         <Link
                           to="/signup"
                           style={{
-                            textDecoration: "none",
-                            color: "var(--primary-color)",
+                            textDecoration: 'none',
+                            color: 'var(--primary-color)',
                           }}
                           onClick={closeProfileActions}
                         >
@@ -117,8 +121,8 @@ const Header = () => {
                         <Link
                           to="/login"
                           style={{
-                            textDecoration: "none",
-                            color: "var(--primary-color)",
+                            textDecoration: 'none',
+                            color: 'var(--primary-color)',
                           }}
                           onClick={closeProfileActions}
                         >
@@ -131,8 +135,8 @@ const Header = () => {
                           to="/"
                           onClick={handleLogout}
                           style={{
-                            textDecoration: "none",
-                            color: "var(--primary-color)",
+                            textDecoration: 'none',
+                            color: 'var(--primary-color)',
                           }}
                         >
                           Logout

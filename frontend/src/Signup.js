@@ -1,19 +1,23 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Validation from "./SignupValidation";
-import axios from "axios";
-import { toast } from "react-toastify";
-import { BASE_URL } from "./config";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import Validation from './SignupValidation';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { BASE_URL } from './config';
 
 export default function Signup() {
   const [values, setValues] = useState({
-    name: "",
-    email: "",
-    password: "",
-    role: "Doctor", // Default role
+    name: '',
+    email: '',
+    password: '',
+    role: 'Doctor', // Default role
   });
 
-  const [availableRoles, setAvailableRoles] = useState(["Doctor", "Patient", "Receptionist"]);
+  const [availableRoles, setAvailableRoles] = useState([
+    'Doctor',
+    'Patient',
+    'Receptionist',
+  ]);
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
 
@@ -21,12 +25,12 @@ export default function Signup() {
     const { name, value } = event.target;
     setValues((prev) => ({ ...prev, [name]: value }));
 
-    if (name === "email") {
+    if (name === 'email') {
       // Check if the email is the admin email and update roles accordingly
-      if (value === "admin.healthnest@gmail.com") {
-        setAvailableRoles(["Doctor", "Patient", "Receptionist", "Admin"]);
+      if (value === 'admin.healthnest@gmail.com') {
+        setAvailableRoles(['Doctor', 'Patient', 'Receptionist', 'Admin']);
       } else {
-        setAvailableRoles(["Doctor", "Patient", "Receptionist"]);
+        setAvailableRoles(['Doctor', 'Patient', 'Receptionist']);
       }
     }
   };
@@ -35,13 +39,13 @@ export default function Signup() {
     event.preventDefault();
     const validationErrors = Validation(values);
     setErrors(validationErrors);
-  
+
     if (Object.keys(validationErrors).length === 0) {
       axios
         .post(`${BASE_URL}/signup`, values)
         .then(() => {
           toast.success('Account created');
-          navigate("/login");
+          navigate('/login');
         })
         .catch((err) => console.log(err));
     } else {
