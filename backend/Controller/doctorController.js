@@ -1,11 +1,11 @@
 const db = require('../db');
-
+const { debugError } = require('../logger');
 // Get all doctors
 exports.getAllDoctors = (req, res) => {
   const sql = 'SELECT * FROM doctor';
   db.query(sql, (err, data) => {
     if (err) {
-      console.error('Database error:', err);
+      debugError('Database error:', err); // Replace console.error with debugError
       return res.status(500).json('Error');
     }
     return res.json(data);
@@ -17,7 +17,7 @@ exports.getDoctorById = (req, res) => {
   const sql = 'SELECT * FROM doctor WHERE doctor_id = ?';
   db.query(sql, [req.params.id], (err, data) => {
     if (err) {
-      console.error('Database error:', err);
+      debugError('Database error:', err); // Use debugError instead of console.error
       return res.status(500).json('Error');
     }
     if (data.length > 0) {
@@ -51,9 +51,9 @@ exports.createDoctor = (req, res) => {
     req.body.hospital_loc, // added hospital_loc
   ];
 
-  db.query(sql, [values], (err, data) => {
+  db.query(sql, [values], (err) => {
     if (err) {
-      console.error('Database error:', err);
+      debugError('Database error:', err); // Use debugError for logging errors
       return res.status(500).json('Error');
     }
     return res.json('Success');
@@ -87,7 +87,7 @@ exports.updateDoctorById = (req, res) => {
 
   db.query(sql, values, (err, data) => {
     if (err) {
-      console.error('Database error:', err);
+      debugError('Database error:', err); // Use debugError for logging errors
       return res.status(500).json('Error');
     }
     if (data.affectedRows > 0) {
@@ -103,7 +103,7 @@ exports.deleteDoctorById = (req, res) => {
   const sql = 'DELETE FROM doctor WHERE doctor_id = ?';
   db.query(sql, [req.params.id], (err, data) => {
     if (err) {
-      console.error('Database error:', err);
+      debugError('Database error:', err); // Use debugError for logging errors
       return res.status(500).json('Error');
     }
     if (data.affectedRows > 0) {
@@ -133,7 +133,7 @@ exports.saveDoctorProfile = (req, res) => {
     'SELECT login_id, name, email, password, role FROM login WHERE email = ?';
   db.query(checkUserSql, [email], (err, result) => {
     if (err) {
-      console.error('Database error:', err);
+      debugError('Database error:', err); // Use debugError for logging errors
       return res.status(500).json({ error: 'Failed to save profile' });
     }
 
@@ -148,7 +148,7 @@ exports.saveDoctorProfile = (req, res) => {
     const checkDoctorSql = 'SELECT * FROM doctor WHERE login_id = ?';
     db.query(checkDoctorSql, [login_id], (err, existingDoctor) => {
       if (err) {
-        console.error('Database error:', err);
+        debugError('Database error:', err); // Use debugError for logging errors
         return res.status(500).json({ error: 'Failed to save profile' });
       }
 
@@ -169,9 +169,9 @@ exports.saveDoctorProfile = (req, res) => {
           login_id,
         ];
 
-        db.query(updateSql, updateValues, (err, updateResult) => {
+        db.query(updateSql, updateValues, (err) => {
           if (err) {
-            console.error('Error updating doctor details:', err);
+            debugError('Error updating doctor details:', err); // Use debugError for logging errors
             return res.status(500).json({ error: 'Internal Server Error' });
           }
 
@@ -194,9 +194,9 @@ exports.saveDoctorProfile = (req, res) => {
           dob,
         ];
 
-        db.query(insertSql, insertValues, (err, insertResult) => {
+        db.query(insertSql, insertValues, (err) => {
           if (err) {
-            console.error('Error inserting new doctor:', err);
+            debugError('Error inserting new doctor:', err); // Use debugError for logging errors
             return res.status(500).json({ error: 'Internal Server Error' });
           }
 

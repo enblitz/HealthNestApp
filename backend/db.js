@@ -2,6 +2,7 @@
 
 const mysql = require('mysql2');
 const dotenv = require('dotenv');
+const { debugLog, debugError } = require('./logger');
 
 dotenv.config();
 
@@ -14,9 +15,9 @@ const db = mysql.createConnection({
 
 db.connect((err) => {
   if (err) {
-    console.error('Error connecting to the database:', err);
+    debugError('Error connecting to the database:', err); // Use debugError for logging errors
   } else {
-    console.log('Connected to the MySQL database.');
+    debugLog('Connected to the MySQL database.'); // Use debugLog for successful connection
   }
 });
 // const mysql = require("mysql2");
