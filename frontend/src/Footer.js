@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.css';
 import { Link } from 'react-router-dom';
-import { BASE_URL } from './config';
 import Logo from './images/Logo.jpg';
 import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from 'react-icons/fa';
 import { FaEnvelope, FaMapMarkerAlt, FaPhoneAlt } from 'react-icons/fa';
@@ -14,9 +13,9 @@ const Footer = () => {
           <div className="col-lg-3 col-md-6">
             <img src={Logo} alt="" width={230} className="footer-image" />
             <div className="footer-o-text d-block mt-3 mb-3">
-              "Your partner in optimal health. Connect with top doctors, manage
-              appointments, and access personalized healthcare solutions
-              seamlessly."
+              &quot;Your partner in optimal health. Connect with top doctors,
+              manage appointments, and access personalized healthcare solutions
+              seamlessly.&quot;
             </div>
             <div className="social-icons">
               <a

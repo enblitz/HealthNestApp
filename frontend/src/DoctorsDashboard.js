@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Grid,
@@ -42,33 +42,7 @@ const DoctorsDashboard = () => {
   // Simulating doctor login with doctorId
   const doctorId = JSON.parse(localStorage.getItem('user')).doctor_id;
 
-  useEffect(() => {
-    const storedAppointments = JSON.parse(
-      localStorage.getItem(`appointments_${doctorId}`)
-    );
-    if (storedAppointments) {
-      updatePastAppointmentsStatus(storedAppointments);
-      setAllAppointments(storedAppointments);
-      calculateAppointmentCounts(storedAppointments);
-    } else {
-      fetchAppointments();
-    }
-  }, [doctorId]);
-
-  useEffect(() => {
-    filterAppointmentsByDate(selectedDate);
-  }, [selectedDate, allAppointments]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchAppointments();
-    }, 3000);
-
-    // Clear interval on component unmount
-    return () => clearInterval(interval);
-  }, [doctorId]);
-
-  const fetchAppointments = async () => {
+  const fetchAppointments = useCallback(async () => {
     try {
       const response = await fetch(
         `${BASE_URL}/appointments/doctor/${doctorId}`
@@ -87,49 +61,58 @@ const DoctorsDashboard = () => {
       console.error('Error:', error);
       setAllAppointments([]);
     }
-  };
+  }, [doctorId, updatePastAppointmentsStatus, calculateAppointmentCounts]);
 
-  const updatePastAppointmentsStatus = async (appointments) => {
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0); // Set to the start of today
+  const updatePastAppointmentsStatus = useCallback(
+    async (appointments) => {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0); // Set to the start of today
 
-    const updatedAppointments = appointments.map((appointment) => {
-      const appointmentDate = new Date(appointment.appointment_date);
-      if (appointmentDate < todayStart && appointment.status !== 'Expired') {
-        appointment.status = 'Expired';
-        updateAppointmentStatusInBackend(appointment.appointment_id, 'Expired');
-      }
-      return appointment;
-    });
-
-    setAllAppointments(updatedAppointments);
-    localStorage.setItem(
-      `appointments_${doctorId}`,
-      JSON.stringify(updatedAppointments)
-    );
-  };
-
-  const updateAppointmentStatusInBackend = async (appointmentId, status) => {
-    try {
-      const response = await fetch(
-        `${BASE_URL}/appointments/${appointmentId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status }),
+      const updatedAppointments = appointments.map((appointment) => {
+        const appointmentDate = new Date(appointment.appointment_date);
+        if (appointmentDate < todayStart && appointment.status !== 'Expired') {
+          appointment.status = 'Expired';
+          updateAppointmentStatusInBackend(
+            appointment.appointment_id,
+            'Expired'
+          );
         }
-      );
-      if (!response.ok) {
-        console.error('Failed to update appointment status');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
+        return appointment;
+      });
 
-  const calculateAppointmentCounts = (data) => {
+      setAllAppointments(updatedAppointments);
+      localStorage.setItem(
+        `appointments_${doctorId}`,
+        JSON.stringify(updatedAppointments)
+      );
+    },
+    [doctorId, updateAppointmentStatusInBackend]
+  );
+
+  const updateAppointmentStatusInBackend = useCallback(
+    async (appointmentId, status) => {
+      try {
+        const response = await fetch(
+          `${BASE_URL}/appointments/${appointmentId}`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status }),
+          }
+        );
+        if (!response.ok) {
+          console.error('Failed to update appointment status');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    },
+    []
+  );
+
+  const calculateAppointmentCounts = useCallback((data) => {
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0); // Set to the start of today
     const todayStr = todayStart.toDateString();
@@ -157,17 +140,51 @@ const DoctorsDashboard = () => {
     setTodayAppointments(todayCount);
     setUpcomingAppointments(upcoming);
     setPastAppointments(past);
-  };
+  }, []);
 
-  const filterAppointmentsByDate = (date) => {
-    const filteredAppointments = allAppointments.filter((appointment) => {
-      const appointmentDate = new Date(
-        appointment.appointment_date
-      ).toDateString();
-      return appointmentDate === date.toDateString();
-    });
-    setAppointments(filteredAppointments);
-  };
+  const filterAppointmentsByDate = useCallback(
+    (date) => {
+      const filteredAppointments = allAppointments.filter((appointment) => {
+        const appointmentDate = new Date(
+          appointment.appointment_date
+        ).toDateString();
+        return appointmentDate === date.toDateString();
+      });
+      setAppointments(filteredAppointments);
+    },
+    [allAppointments]
+  );
+
+  useEffect(() => {
+    const storedAppointments = JSON.parse(
+      localStorage.getItem(`appointments_${doctorId}`)
+    );
+    if (storedAppointments) {
+      updatePastAppointmentsStatus(storedAppointments);
+      setAllAppointments(storedAppointments);
+      calculateAppointmentCounts(storedAppointments);
+    } else {
+      fetchAppointments();
+    }
+  }, [
+    doctorId,
+    fetchAppointments,
+    updatePastAppointmentsStatus,
+    calculateAppointmentCounts,
+  ]);
+
+  useEffect(() => {
+    filterAppointmentsByDate(selectedDate);
+  }, [selectedDate, allAppointments, filterAppointmentsByDate]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchAppointments();
+    }, 3000);
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, [fetchAppointments]);
 
   const handleDateClick = (value) => {
     setSelectedDate(value);
@@ -213,12 +230,6 @@ const DoctorsDashboard = () => {
     }
   };
 
-  const isPastDate = (date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to the start of today
-    return date < today;
-  };
-
   const isToday = (date) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to the start of today
@@ -255,7 +266,7 @@ const DoctorsDashboard = () => {
           <Grid item xs={12} sm={6} md={3}>
             <Paper className="grid-item">
               <Typography variant="h6" gutterBottom>
-                Today's Appointments
+                Today&apos;s Appointments
               </Typography>
               <Typography variant="body1">{todayAppointments}</Typography>
             </Paper>

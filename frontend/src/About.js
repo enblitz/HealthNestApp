@@ -38,9 +38,10 @@ const AboutPage = () => {
             <b> Search Doctors : </b>Quickly find doctors by specialty,
             location, availability, and ratings. Our comprehensive database
             allows you to compare and select the right healthcare provider for
-            you.Read detailed profiles, patient reviews, and see the doctor's
-            credentials to make an informed decision. Our user-friendly search
-            filters help you narrow down the best options effortlessly.
+            you.Read detailed profiles, patient reviews, and see the
+            doctor&apos;s credentials to make an informed decision. Our
+            user-friendly search filters help you narrow down the best options
+            effortlessly.
           </p>
           <p className="about-p lst">
             <b> DashBoard For Doctors : </b> A dedicated dashboard for doctors

@@ -15,7 +15,7 @@ function Home() {
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user ? user.role : '';
 
-  const [filter, setFilter] = useState({
+  const [filter] = useState({
     name: '',
     specialization: '',
     fees: '',
@@ -288,9 +288,13 @@ function Home() {
       {showPopup && (
         <div className="popup">
           <div className="popup-content">
-            <span className="close-popup" onClick={() => setShowPopup(false)}>
+            <button
+              className="close-popup"
+              onClick={() => setShowPopup(false)}
+              aria-label="Close"
+            >
               &times;
-            </span>
+            </button>
             <h2>Complete Your Profile</h2>
             <form onSubmit={handleSubmit}>
               <div className="form-group">

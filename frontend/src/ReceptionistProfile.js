@@ -38,8 +38,8 @@ const AccountDetails = ({ user }) => {
   );
 };
 
-const MyAppointments = ({ user }) => {
-  const [Appointments, setAppointments] = useState([]);
+const MyAppointments = () => {
+  const [Appointments] = useState([]);
 
   return (
     <div className="my-appointments">
@@ -63,7 +63,7 @@ const MyAppointments = ({ user }) => {
                     />
                     <div>
                       <p>Appointment Id: {}</p>
-                      <p>Doctor's name: {}</p>
+                      <p>Doctor&apos;s name: {}</p>
                       <p>Price: {}</p>
                       <p>Quantity: {}</p>
                     </div>
@@ -213,8 +213,9 @@ const UpdateProfile = ({ user }) => {
           </label>
         </div>
         <div className="gender">
-          <label>Gender:</label>
+          <label htmlFor="gender">Gender:</label>
           <select
+            id="gender"
             name="gender"
             value={formData.gender}
             onChange={handleChange}
@@ -227,8 +228,9 @@ const UpdateProfile = ({ user }) => {
           </select>
         </div>
         <div className="insurance">
-          <label>Insurance:</label>
+          <label htmlFor="insurance">Insurance:</label>
           <select
+            id="insurance"
             name="insurance"
             value={formData.insurance}
             onChange={handleChange}

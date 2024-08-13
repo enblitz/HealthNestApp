@@ -145,7 +145,6 @@ const DoctorsProfile = () => {
       const fetchUserDetails = async () => {
         try {
           setIsLoading(true);
-          const role = storedUser.role;
           const response = await axios.get(
             `${BASE_URL}/doctors/email/${storedUser.email}`
           );

@@ -244,8 +244,9 @@ const UpdateProfile = ({ user }) => {
           </label>
         </div>
         <div className="gender">
-          <label>Gender:</label>
+          <label htmlFor="gender">Gender:</label>
           <select
+            id="gender"
             name="gender"
             value={formData.gender}
             onChange={handleChange}
@@ -258,8 +259,9 @@ const UpdateProfile = ({ user }) => {
           </select>
         </div>
         <div className="insurance">
-          <label>Insurance:</label>
+          <label htmlFor="insurance">Insurance:</label>
           <select
+            id="insurance"
             name="insurance"
             value={formData.insurance}
             onChange={handleChange}

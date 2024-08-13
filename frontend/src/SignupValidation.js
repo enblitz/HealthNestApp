@@ -2,7 +2,7 @@ function SignupValidation(values) {
   let error = {};
   const email_pattern = /\S+@\S+\.\S+/;
   const password_pattern =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#%&])(?=.{8,})/;
 
   if (values.name === '') {
     error.name = 'Name cannot be empty';

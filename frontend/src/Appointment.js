@@ -158,9 +158,7 @@ const AppointmentScheduler = () => {
   };
 
   // Payment Function
-  const [currentCardBackground, setCurrentCardBackground] = useState(
-    Math.floor(Math.random() * 25 + 1)
-  );
+  const [currentCardBackground] = useState(Math.floor(Math.random() * 25 + 1));
   const [cardName, setCardName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [cardMonth, setCardMonth] = useState('');
@@ -387,8 +385,9 @@ const AppointmentScheduler = () => {
                       <p>{appointment.patient_number}</p>
                     </div>
                   ))} */}
-                  <label>Reason for Visit</label>
+                  <label htmlFor="reason">Reason for Visit</label>
                   <input
+                    id="reason"
                     className="ap-form-input"
                     name="reasonForVisit"
                     value={formValues.reasonForVisit}
@@ -494,12 +493,12 @@ const AppointmentScheduler = () => {
                               </div>
                             </label>
                             <div className="card-item__date">
-                              <label className="card-item__dateTitle">
+                              <span className="card-item__dateTitle">
                                 Expires
-                              </label>
-                              <label className="card-item__dateItem">
+                              </span>
+                              <span className="card-item__dateItem">
                                 {cardMonth || 'MM'}/{cardYear || 'YY'}
-                              </label>
+                              </span>
                             </div>
                           </div>
                         </div>
