@@ -31,6 +31,7 @@ module.exports = {
     'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     'no-console': 'warn',
     'no-debugger': 'warn',
+    'jsx-a11y/click-events-have-key-events': 'off',
     'jsx-a11y/anchor-is-valid': [
       'warn',
       {
