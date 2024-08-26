@@ -80,15 +80,13 @@ const Header = () => {
                   <span> | {user.role}</span>
                 </div>
               )}
-              {/* Replacing div with button for better accessibility */}
-              <button
-                className="user_icon"
-                onBlur={closeProfileActions}
-                onClick={toggleProfileActions}
-                aria-label="Toggle Profile Actions"
-                style={{ background: 'none', border: 'none', padding: 0 }}
-              >
-                <img src={userIcon} alt="User Icon" />
+              <div className="user_icon" onBlur={closeProfileActions}>
+                <img
+                  src={userIcon}
+                  alt="User Icon"
+                  onClick={toggleProfileActions}
+                  role="presentation"
+                />
                 <div
                   className={`profile-actions ${
                     profileActionsVisible ? 'show_profileActions' : ''
@@ -148,15 +146,13 @@ const Header = () => {
                     )}
                   </div>
                 </div>
-              </button>
-              {/* Replacing div with button for better accessibility */}
-              <button
-                className="mobile_menu"
-                onClick={menuToggle}
-                aria-label="Toggle Menu"
-                style={{ background: 'none', border: 'none', padding: 0 }}
-              >
-                <span className="menu_icon">
+              </div>
+              <div className="mobile_menu">
+                <span
+                  className="menu_icon"
+                  onClick={menuToggle}
+                  role="presentation"
+                >
                   <svg
                     width="24"
                     height="24"
@@ -187,7 +183,7 @@ const Header = () => {
                     ></path>
                   </svg>
                 </span>
-              </button>
+              </div>
             </div>
           </div>
         </Row>
