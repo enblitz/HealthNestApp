@@ -8,10 +8,18 @@ const { debugLog, debugError } = require('./logger');
 dotenv.config();
 debugLog('API_PORT ' + process.env.API_PORT);
 const app = express();
-const port = process.env.API_PORT || 4000;
+const port = process.env.API_PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./public/swagger.json');
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// console.log('Swagger UI available at http://localhost:3000/api-docs');
+
 
 // Create a MySQL connection using environment variables
 const db = mysql.createConnection({
@@ -410,4 +418,7 @@ app.put('/appointments/:appointment_id', (req, res) => {
 
     return res.json({ message: 'Appointment status updated successfully' });
   });
+
+
+
 });
